@@ -1,0 +1,25 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+.turbo/
+build/
+
+# env files (NEVER commit real ones)
+.env
+.env.dev
+.env.test
+.env.prod
+.env.local
+
+# logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
