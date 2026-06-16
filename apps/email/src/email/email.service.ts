@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Resend } from 'resend';
 import { welcomeTemplate } from './templates/welcome.template';
+import { verificationTemplate } from './templates/verification.template';
 import { UserCreatedEvent } from '@roomate/shared-types';
 
 @Injectable()
@@ -9,7 +10,6 @@ export class EmailService {
   private readonly resend: Resend;
 
   constructor() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     this.resend = new Resend(process.env.RESEND_API_KEY ?? '');
   }
 
@@ -17,6 +17,11 @@ export class EmailService {
     const mail = welcomeTemplate(data.name);
     mail.to = data.email;
     await this.sendWithRetry(mail, 'welcome');
+  }
+
+  async sendVerificationEmail(email: string, token: string): Promise<void> {
+    const mail = verificationTemplate(email, token);
+    await this.sendWithRetry(mail, 'verification');
   }
 
   private async sendWithRetry(
@@ -33,7 +38,6 @@ export class EmailService {
 
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         await this.resend.emails.send({
           from: `${mail.from.name} <${mail.from.email}>`,
           to: recipient,
