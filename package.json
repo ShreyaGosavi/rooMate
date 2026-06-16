@@ -1,5 +1,5 @@
 {
-  "name": "RooMate",
+  "name": "rooMate",
   "private": true,
   "scripts": {
     "build": "turbo run build",

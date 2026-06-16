@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+
+jobs:
+  test-email:
+    name: Lint and Test — Email Service
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install root dependencies
+        run: npm install
+
+      - name: Install Email service dependencies
+        run: npm install
+        working-directory: apps/email
+
+      - name: Build shared-types
+        run: npm run build
+        working-directory: packages/shared-types
+
+      - name: Lint Email service
+        run: npm run lint
+        working-directory: apps/email
+
+      - name: Test Email service
+        run: npm test
+        working-directory: apps/email
