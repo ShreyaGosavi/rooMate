@@ -12,7 +12,7 @@ describe('EmailService', () => {
   beforeEach(async () => {
     mockResendSend = jest
       .fn()
-      .mockResolvedValueOnce({ data: { id: 'test-email-id' }, error: null });
+      .mockResolvedValue({ data: { id: 'test-email-id' }, error: null });
 
     (Resend as jest.Mock).mockImplementation(() => ({
       emails: {
