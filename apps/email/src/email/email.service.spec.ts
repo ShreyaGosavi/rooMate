@@ -10,7 +10,9 @@ describe('EmailService', () => {
   let mockResendSend: jest.Mock;
 
   beforeEach(async () => {
-    mockResendSend = jest.fn().mockResolvedValue({ id: 'test-email-id' });
+    mockResendSend = jest
+      .fn()
+      .mockResolvedValueOnce({ data: { id: 'test-email-id' }, error: null });
 
     (Resend as jest.Mock).mockImplementation(() => ({
       emails: {
@@ -50,7 +52,7 @@ describe('EmailService', () => {
     it('should retry on failure and succeed on second attempt', async () => {
       mockResendSend
         .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce({ id: 'test-email-id' });
+        .mockResolvedValueOnce({ data: { id: 'test-email-id' }, error: null });
 
       await service.sendWelcomeEmail({
         userId: 'user-123',

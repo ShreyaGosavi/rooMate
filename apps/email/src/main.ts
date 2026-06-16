@@ -22,4 +22,4 @@ async function bootstrap() {
   console.log('Email service is listening for Kafka events');
 }
 
-bootstrap();
+bootstrap().catch(console.error);
