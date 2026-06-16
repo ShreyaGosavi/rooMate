@@ -45,6 +45,7 @@ describe('EmailService', () => {
         from: 'RooMate <onboarding@resend.dev>',
         to: 'test@example.com',
         subject: 'Welcome to RooMate!',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         html: expect.stringContaining('Hey Test User'),
       });
     });
