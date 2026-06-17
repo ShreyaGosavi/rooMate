@@ -1,5 +1,8 @@
 {
   "extends": "@roomate/tsconfig/nestjs.json",
-  "compilerOptions": { "outDir": "./dist" },
-  "include": ["src/**/*"]
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./"
+  },
+  "include": ["src/**/*", "prisma.config.ts"]
 }
