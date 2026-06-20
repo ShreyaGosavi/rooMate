@@ -19,16 +19,40 @@ export class NotificationService {
     });
   }
 
+  async createPropertyCreatedNotification(userId: string, propertyId: string): Promise<void> {
+    await this.notificationRepository.create({
+      userId,
+      type: NotificationType.PROPERTY_CREATED,
+      title: 'Listing received!',
+      message: 'Your property has been submitted and is under review. We\'ll verify it within 24 hours.',
+      link: `/listings/${propertyId}`,
+    });
+  }
+
+  async createPropertyApprovedNotification(userId: string, propertyId: string): Promise<void> {
+    await this.notificationRepository.create({
+      userId,
+      type: NotificationType.PROPERTY_APPROVED,
+      title: 'Your listing is live!',
+      message: 'Your property has been verified and is now visible to potential tenants.',
+      link: `/listings/${propertyId}`,
+    });
+  }
+
+  async createPropertyRejectedNotification(userId: string, propertyId: string): Promise<void> {
+    await this.notificationRepository.create({
+      userId,
+      type: NotificationType.PROPERTY_REJECTED,
+      title: 'Listing not approved',
+      message: 'Your property listing could not be approved. Please review and resubmit.',
+      link: `/listings/${propertyId}`,
+    });
+  }
+
   async getNotifications(userId: string, query: NotificationQueryDto) {
     const { page, limit, unreadOnly } = query;
     const { notifications, total } =
-      await this.notificationRepository.findByUserId(
-        userId,
-        page,
-        limit,
-        unreadOnly,
-      );
-
+      await this.notificationRepository.findByUserId(userId, page, limit, unreadOnly);
     return {
       data: notifications,
       meta: {
@@ -46,13 +70,8 @@ export class NotificationService {
   }
 
   async markOneRead(id: string, userId: string) {
-    const notification = await this.notificationRepository.markOneRead(
-      id,
-      userId,
-    );
-    if (!notification) {
-      throw new NotFoundException('Notification not found');
-    }
+    const notification = await this.notificationRepository.markOneRead(id, userId);
+    if (!notification) throw new NotFoundException('Notification not found');
     return notification;
   }
 
@@ -62,13 +81,8 @@ export class NotificationService {
   }
 
   async deleteOne(id: string, userId: string): Promise<{ message: string }> {
-    const notification = await this.notificationRepository.deleteOne(
-      id,
-      userId,
-    );
-    if (!notification) {
-      throw new NotFoundException('Notification not found');
-    }
+    const notification = await this.notificationRepository.deleteOne(id, userId);
+    if (!notification) throw new NotFoundException('Notification not found');
     return { message: 'Notification deleted' };
   }
 }

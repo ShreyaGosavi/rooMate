@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Resend } from 'resend';
 import { welcomeTemplate } from './templates/welcome.template';
 import { verificationTemplate } from './templates/verification.template';
+import { propertySubmittedTemplate } from './templates/property-submitted.template';
+import { propertyApprovedTemplate } from './templates/property-approved.template';
+import { propertyRejectedTemplate } from './templates/property-rejected.template';
 import { UserCreatedEvent } from '@roomate/shared-types';
 
 @Injectable()
@@ -24,6 +27,21 @@ export class EmailService {
     await this.sendWithRetry(mail, 'verification');
   }
 
+  async sendPropertySubmittedEmail(ownerEmail: string): Promise<void> {
+    const mail = propertySubmittedTemplate(ownerEmail);
+    await this.sendWithRetry(mail, 'property-submitted');
+  }
+
+  async sendPropertyApprovedEmail(ownerEmail: string): Promise<void> {
+    const mail = propertyApprovedTemplate(ownerEmail);
+    await this.sendWithRetry(mail, 'property-approved');
+  }
+
+  async sendPropertyRejectedEmail(ownerEmail: string): Promise<void> {
+    const mail = propertyRejectedTemplate(ownerEmail);
+    await this.sendWithRetry(mail, 'property-rejected');
+  }
+
   private async sendWithRetry(
     mail: {
       to: string;
@@ -35,7 +53,6 @@ export class EmailService {
     retries = 3,
   ): Promise<void> {
     const recipient = mail.to;
-
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
         await this.resend.emails.send({
@@ -48,18 +65,15 @@ export class EmailService {
         return;
       } catch (error: unknown) {
         const err = error instanceof Error ? error : new Error(String(error));
-
         this.logger.warn(
           `Email attempt ${attempt}/${retries} failed — type: ${type}, reason: ${err.message}`,
         );
-
         if (attempt === retries) {
           this.logger.error(
             `All ${retries} attempts failed — type: ${type}, to: ${recipient}`,
           );
           throw err;
         }
-
         await this.delay(attempt * 1000);
       }
     }

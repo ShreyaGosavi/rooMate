@@ -14,6 +14,12 @@ class SendVerificationDto {
   token: string;
 }
 
+interface PropertyEvent {
+  propertyId: string;
+  ownerId: string;
+  ownerEmail: string;
+}
+
 @Controller('email')
 export class EmailController {
   constructor(private readonly emailService: EmailService) {}
@@ -27,5 +33,20 @@ export class EmailController {
   @MessagePattern('user.created')
   async handleUserCreated(@Payload() data: UserCreatedEvent): Promise<void> {
     await this.emailService.sendWelcomeEmail(data);
+  }
+
+  @MessagePattern('property.created')
+  async handlePropertyCreated(@Payload() data: PropertyEvent): Promise<void> {
+    await this.emailService.sendPropertySubmittedEmail(data.ownerEmail);
+  }
+
+  @MessagePattern('property.approved')
+  async handlePropertyApproved(@Payload() data: PropertyEvent): Promise<void> {
+    await this.emailService.sendPropertyApprovedEmail(data.ownerEmail);
+  }
+
+  @MessagePattern('property.rejected')
+  async handlePropertyRejected(@Payload() data: PropertyEvent): Promise<void> {
+    await this.emailService.sendPropertyRejectedEmail(data.ownerEmail);
   }
 }
