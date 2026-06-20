@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import type { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError } from 'axios';
 import { ROUTE_MAP } from './route-map';
 
 interface ProxyResult {
@@ -19,30 +19,31 @@ export class ProxyService {
   ) {}
 
   async forward(req: Request): Promise<ProxyResult | null> {
-    // req.originalUrl includes the global prefix, e.g. /api/auth/signup
     const pathAfterApi = req.originalUrl.replace(/^\/api\//, '');
     const [prefix] = pathAfterApi.split('/');
-
     const route = ROUTE_MAP.find((r) => r.prefix === prefix);
-    if (!route) {
-      return null;
-    }
+
+    if (!route) return null;
 
     const baseUrl = this.configService.get<string>(route.serviceUrlEnvKey);
     const targetUrl = `${baseUrl}/api/${pathAfterApi}`;
 
+    const contentType = req.headers['content-type'] ?? '';
+    const isMultipart = contentType.includes('multipart/form-data');
+
     try {
-      const response: AxiosResponse<unknown> = await firstValueFrom(
-        this.httpService.request<unknown>({
+      const response = await firstValueFrom(
+        this.httpService.request({
           method: req.method,
           url: targetUrl,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          data: req.body,
+          data: isMultipart ? req : req.body,
           headers: {
             ...req.headers,
             host: undefined,
             'content-length': undefined,
           },
+          maxBodyLength: Infinity,
+          maxContentLength: Infinity,
         }),
       );
       return { status: response.status, data: response.data };
