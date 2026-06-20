@@ -167,4 +167,46 @@ describe('NotificationService', () => {
       expect(result).toEqual({ message: 'Notification deleted' });
     });
   });
+
+  describe('createPropertyCreatedNotification', () => {
+    it('should create a property created notification', async () => {
+      mockRepository.create.mockResolvedValue({});
+      await service.createPropertyCreatedNotification('user-1', 'prop-1');
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-1',
+          type: 'PROPERTY_CREATED',
+          link: '/listings/prop-1',
+        }),
+      );
+    });
+  });
+
+  describe('createPropertyApprovedNotification', () => {
+    it('should create a property approved notification', async () => {
+      mockRepository.create.mockResolvedValue({});
+      await service.createPropertyApprovedNotification('user-1', 'prop-1');
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-1',
+          type: 'PROPERTY_APPROVED',
+          link: '/listings/prop-1',
+        }),
+      );
+    });
+  });
+
+  describe('createPropertyRejectedNotification', () => {
+    it('should create a property rejected notification', async () => {
+      mockRepository.create.mockResolvedValue({});
+      await service.createPropertyRejectedNotification('user-1', 'prop-1');
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-1',
+          type: 'PROPERTY_REJECTED',
+          link: '/listings/prop-1',
+        }),
+      );
+    });
+  });
 });

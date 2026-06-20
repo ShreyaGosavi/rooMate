@@ -15,9 +15,7 @@ describe('EmailService', () => {
       .mockResolvedValue({ data: { id: 'test-email-id' }, error: null });
 
     (Resend as jest.Mock).mockImplementation(() => ({
-      emails: {
-        send: mockResendSend,
-      },
+      emails: { send: mockResendSend },
     }));
 
     const module: TestingModule = await Test.createTestingModule({
@@ -39,7 +37,6 @@ describe('EmailService', () => {
         email: 'test@example.com',
         name: 'Test User',
       });
-
       expect(mockResendSend).toHaveBeenCalledTimes(1);
       expect(mockResendSend).toHaveBeenCalledWith({
         from: 'RooMate <onboarding@resend.dev>',
@@ -76,6 +73,48 @@ describe('EmailService', () => {
       ).rejects.toThrow('Resend is down');
 
       expect(mockResendSend).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('sendPropertySubmittedEmail', () => {
+    it('should send property submitted email', async () => {
+      await service.sendPropertySubmittedEmail('owner@example.com');
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'owner@example.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('received'),
+        }),
+      );
+    });
+  });
+
+  describe('sendPropertyApprovedEmail', () => {
+    it('should send property approved email', async () => {
+      await service.sendPropertyApprovedEmail('owner@example.com');
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'owner@example.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('live'),
+        }),
+      );
+    });
+  });
+
+  describe('sendPropertyRejectedEmail', () => {
+    it('should send property rejected email', async () => {
+      await service.sendPropertyRejectedEmail('owner@example.com');
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'owner@example.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('listing'),
+        }),
+      );
     });
   });
 });

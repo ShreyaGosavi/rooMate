@@ -20,6 +20,7 @@ describe('ProxyService', () => {
         const config: Record<string, string> = {
           AUTH_SERVICE_URL: 'http://localhost:3001',
           NOTIFICATION_SERVICE_URL: 'http://localhost:3008',
+          LISTING_SERVICE_URL: 'http://localhost:3003',
         };
         return config[key];
       }),
@@ -83,6 +84,22 @@ describe('ProxyService', () => {
       expect(mockHttpService.request).toHaveBeenCalledWith(
         expect.objectContaining({
           url: 'http://localhost:3008/api/notifications',
+        }),
+      );
+      expect(result?.status).toBe(200);
+    });
+
+    it('should forward request to Listing service and return response', async () => {
+      mockHttpService.request.mockReturnValue(
+        of({ status: 200, data: { results: [], total: 0 } }),
+      );
+
+      const req = mockRequest('/api/listings');
+      const result = await service.forward(req);
+
+      expect(mockHttpService.request).toHaveBeenCalledWith(
+        expect.objectContaining({
+          url: 'http://localhost:3003/api/listings',
         }),
       );
       expect(result?.status).toBe(200);
