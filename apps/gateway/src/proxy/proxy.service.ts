@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import type { Request } from 'express';
 import { firstValueFrom } from 'rxjs';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { ROUTE_MAP } from './route-map';
 
 interface ProxyResult {
@@ -27,16 +27,16 @@ export class ProxyService {
 
     const baseUrl = this.configService.get<string>(route.serviceUrlEnvKey);
     const targetUrl = `${baseUrl}/api/${pathAfterApi}`;
-
-    const contentType = req.headers['content-type'] ?? '';
+    const contentType = (req.headers['content-type'] as string) ?? '';
     const isMultipart = contentType.includes('multipart/form-data');
+    const requestData: unknown = isMultipart ? req : (req.body as unknown);
 
     try {
-      const response = await firstValueFrom(
-        this.httpService.request({
+      const response: AxiosResponse<unknown> = await firstValueFrom(
+        this.httpService.request<unknown>({
           method: req.method,
           url: targetUrl,
-          data: isMultipart ? req : req.body,
+          data: requestData,
           headers: {
             ...req.headers,
             host: undefined,
