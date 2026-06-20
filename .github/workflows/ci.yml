@@ -1,41 +1,32 @@
 name: CI
-
 on:
   pull_request:
     branches:
       - dev
       - main
-
 jobs:
   test-email:
     name: Lint and Test — Email Service
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
       - name: Install root dependencies
         run: npm install
-
       - name: Install Email service dependencies
         run: npm install
         working-directory: apps/email
-
       - name: Build shared-types
         run: npm run build
         working-directory: packages/shared-types
-
       - name: Lint Email service
         run: npm run lint
         working-directory: apps/email
-
       - name: Test Email service
         run: npm test
         working-directory: apps/email
@@ -43,105 +34,87 @@ jobs:
   test-auth:
     name: Lint and Test — Auth Service
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
       - name: Install root dependencies
         run: npm install
-
       - name: Install Auth service dependencies
         run: npm install
         working-directory: apps/auth
-
       - name: Build shared-types
         run: npm run build
         working-directory: packages/shared-types
-
       - name: Generate Prisma client
         run: npx prisma generate
         working-directory: apps/auth
         env:
-            DATABASE_URL: postgresql://postgres:postgres@localhost:5432/auth_db
-
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/auth_db
       - name: Lint Auth service
         run: npm run lint
         working-directory: apps/auth
-
       - name: Test Auth service
         run: npm test
         working-directory: apps/auth
+
   test-notification:
     name: Lint and Test — Notification Service
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
       - name: Install root dependencies
         run: npm install
-
       - name: Install Notification service dependencies
         run: npm install
         working-directory: apps/notification
-
       - name: Build shared-types
         run: npm run build
         working-directory: packages/shared-types
-
       - name: Lint Notification service
         run: npm run lint
         working-directory: apps/notification
-
       - name: Test Notification service
         run: npm test
         working-directory: apps/notification
+
   test-gateway:
     name: Lint and Test — Gateway Service
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-
       - name: Install root dependencies
         run: npm install
-
       - name: Install Gateway service dependencies
         run: npm install
         working-directory: apps/gateway
-
       - name: Build shared-types
         run: npm run build
         working-directory: packages/shared-types
-
       - name: Lint Gateway service
         run: npm run lint
         working-directory: apps/gateway
-
       - name: Test Gateway service
         run: npm test
-        working-directory: apps/gateway  test-listing:
+        working-directory: apps/gateway
+
+  test-listing:
     name: Lint and Test — Listing Service
     runs-on: ubuntu-latest
     steps:
