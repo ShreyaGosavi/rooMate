@@ -20,13 +20,23 @@ export class NotificationService {
   }
 
   async createPropertyCreatedNotification(userId: string, propertyId: string): Promise<void> {
-    await this.notificationRepository.create({
-      userId,
-      type: NotificationType.PROPERTY_CREATED,
-      title: 'Listing received!',
-      message: 'Your property has been submitted and is under review. We\'ll verify it within 24 hours.',
-      link: `/listings/${propertyId}`,
-    });
+    await Promise.all([
+      this.notificationRepository.create({
+        userId,
+        type: NotificationType.PROPERTY_CREATED,
+        title: 'Listing received!',
+        message: "Your property has been submitted and is under review. We'll verify it within 24 hours.",
+        link: `/listings/${propertyId}`,
+      }),
+      this.notificationRepository.create({
+        userId: 'admin',
+        type: NotificationType.PROPERTY_CREATED,
+        title: 'New property listing submitted',
+        message: `A new property listing requires verification.`,
+        link: `/admin/properties/${propertyId}`,
+        isAdminNotification: true,
+      }),
+    ]);
   }
 
   async createPropertyApprovedNotification(userId: string, propertyId: string): Promise<void> {
@@ -49,18 +59,63 @@ export class NotificationService {
     });
   }
 
+  async createCommunityRequestedNotification(userId: string, communityName: string): Promise<void> {
+    await Promise.all([
+      this.notificationRepository.create({
+        userId,
+        type: NotificationType.COMMUNITY_REQUESTED,
+        title: 'Community request received!',
+        message: `Your request for "${communityName}" has been received. We'll review it within 24 hours.`,
+        link: '/communities',
+      }),
+      this.notificationRepository.create({
+        userId: 'admin',
+        type: NotificationType.COMMUNITY_REQUESTED,
+        title: 'New community request',
+        message: `A user has requested a new community: "${communityName}".`,
+        link: '/admin/communities/requests',
+        isAdminNotification: true,
+      }),
+    ]);
+  }
+
+  async createCommunityApprovedNotification(userId: string, communityName: string): Promise<void> {
+    await this.notificationRepository.create({
+      userId,
+      type: NotificationType.COMMUNITY_APPROVED,
+      title: 'Your community is live!',
+      message: `"${communityName}" has been approved and is now live on RooMate.`,
+      link: '/communities',
+    });
+  }
+
+  async createCommunityRejectedNotification(userId: string, communityName: string): Promise<void> {
+    await this.notificationRepository.create({
+      userId,
+      type: NotificationType.COMMUNITY_REJECTED,
+      title: 'Community request not approved',
+      message: `Your request for "${communityName}" could not be approved at this time.`,
+      link: '/communities',
+    });
+  }
+
   async getNotifications(userId: string, query: NotificationQueryDto) {
     const { page, limit, unreadOnly } = query;
     const { notifications, total } =
       await this.notificationRepository.findByUserId(userId, page, limit, unreadOnly);
     return {
       data: notifications,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
+    };
+  }
+
+  async getAdminNotifications(query: NotificationQueryDto) {
+    const { page, limit, unreadOnly } = query;
+    const { notifications, total } =
+      await this.notificationRepository.findAdminNotifications(page, limit, unreadOnly);
+    return {
+      data: notifications,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
     };
   }
 
@@ -69,8 +124,19 @@ export class NotificationService {
     return { count };
   }
 
+  async getAdminUnreadCount(): Promise<{ count: number }> {
+    const count = await this.notificationRepository.countAdminUnread();
+    return { count };
+  }
+
   async markOneRead(id: string, userId: string) {
     const notification = await this.notificationRepository.markOneRead(id, userId);
+    if (!notification) throw new NotFoundException('Notification not found');
+    return notification;
+  }
+
+  async markAdminNotificationRead(id: string) {
+    const notification = await this.notificationRepository.markAdminNotificationRead(id);
     if (!notification) throw new NotFoundException('Notification not found');
     return notification;
   }

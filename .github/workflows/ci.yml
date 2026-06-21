@@ -174,3 +174,28 @@ jobs:
       - name: Test Community service
         run: npm test
         working-directory: apps/community
+  test-admin:
+    name: Lint and Test — Admin BFF
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install root dependencies
+        run: npm install
+      - name: Install Admin service dependencies
+        run: npm install
+        working-directory: apps/admin
+      - name: Build shared-types
+        run: npm run build
+        working-directory: packages/shared-types
+      - name: Lint Admin service
+        run: npm run lint
+        working-directory: apps/admin
+      - name: Test Admin service
+        run: npm test
+        working-directory: apps/admin
