@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Community {
+  id              String            @id @default(cuid())
+  name            String
+  type            CommunityType
+  city            String
+  officialWebsite String?
+  email           String?
+  ctgId           String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  members         CommunityMember[]
+  notices         Notice[]
+
+  @@unique([name, city])
+  @@index([city])
+  @@index([name])
+  @@index([type])
+}
+
+model CommunityMember {
+  id          String    @id @default(cuid())
+  userId      String
+  communityId String
+  joinedAt    DateTime  @default(now())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, communityId])
+  @@index([communityId])
+  @@index([userId])
+}
+
+model CommunityRequest {
+  id              String        @id @default(cuid())
+  requestedById   String
+  communityName   String
+  type            CommunityType
+  city            String
+  officialWebsite String?
+  email           String?
+  ctgId           String?
+  status          RequestStatus @default(PENDING)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([communityName, city])
+  @@index([requestedById])
+  @@index([status])
+}
+
+model Notice {
+  id          String     @id @default(cuid())
+  communityId String
+  postedById  String
+  type        NoticeType
+  title       String
+  description String
+  metadata    Json?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  community   Community  @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@index([communityId])
+  @@index([communityId, type])
+  @@index([createdAt])
+  @@index([isActive])
+  @@index([postedById])
+}
+
+enum CommunityType {
+  COLLEGE
+  COMPANY
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NoticeType {
+  ROOMMATE_NEEDED
+  SPARE_ITEM_GIVEAWAY
+}
