@@ -144,3 +144,33 @@ jobs:
       - name: Test Listing service
         run: npm test
         working-directory: apps/listing
+  test-community:
+    name: Lint and Test — Community Service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install root dependencies
+        run: npm install
+      - name: Install Community service dependencies
+        run: npm install
+        working-directory: apps/community
+      - name: Build shared-types
+        run: npm run build
+        working-directory: packages/shared-types
+      - name: Generate Prisma client
+        run: npx prisma generate
+        working-directory: apps/community
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/community_db
+      - name: Lint Community service
+        run: npm run lint
+        working-directory: apps/community
+      - name: Test Community service
+        run: npm test
+        working-directory: apps/community
