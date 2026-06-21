@@ -5,6 +5,10 @@ import { verificationTemplate } from './templates/verification.template';
 import { propertySubmittedTemplate } from './templates/property-submitted.template';
 import { propertyApprovedTemplate } from './templates/property-approved.template';
 import { propertyRejectedTemplate } from './templates/property-rejected.template';
+import { communityRequestedTemplate } from './templates/community-requested.template';
+import { communityRequestConfirmationTemplate } from './templates/community-request-confirmation.template';
+import { communityApprovedTemplate } from './templates/community-approved.template';
+import { communityRejectedTemplate } from './templates/community-rejected.template';
 import { UserCreatedEvent } from '@roomate/shared-types';
 
 @Injectable()
@@ -40,6 +44,34 @@ export class EmailService {
   async sendPropertyRejectedEmail(ownerEmail: string): Promise<void> {
     const mail = propertyRejectedTemplate(ownerEmail);
     await this.sendWithRetry(mail, 'property-rejected');
+  }
+
+  async sendCommunityRequestedEmail(
+    adminEmail: string,
+    communityName: string,
+    city: string,
+    requestedByEmail: string,
+  ): Promise<void> {
+    const mail = communityRequestedTemplate(adminEmail, communityName, city, requestedByEmail);
+    await this.sendWithRetry(mail, 'community-requested-admin');
+  }
+
+  async sendCommunityRequestConfirmationEmail(
+    userEmail: string,
+    communityName: string,
+  ): Promise<void> {
+    const mail = communityRequestConfirmationTemplate(userEmail, communityName);
+    await this.sendWithRetry(mail, 'community-request-confirmation');
+  }
+
+  async sendCommunityApprovedEmail(ownerEmail: string, communityName: string): Promise<void> {
+    const mail = communityApprovedTemplate(ownerEmail, communityName);
+    await this.sendWithRetry(mail, 'community-approved');
+  }
+
+  async sendCommunityRejectedEmail(ownerEmail: string, communityName: string): Promise<void> {
+    const mail = communityRejectedTemplate(ownerEmail, communityName);
+    await this.sendWithRetry(mail, 'community-rejected');
   }
 
   private async sendWithRetry(

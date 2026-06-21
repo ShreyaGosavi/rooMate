@@ -9,6 +9,12 @@ interface PropertyEvent {
   ownerEmail: string;
 }
 
+interface CommunityEvent {
+  requestId: string;
+  communityName: string;
+  requestedById: string;
+}
+
 @Controller()
 export class NotificationConsumer {
   constructor(private readonly notificationService: NotificationService) {}
@@ -31,5 +37,29 @@ export class NotificationConsumer {
   @MessagePattern('property.rejected')
   async handlePropertyRejected(@Payload() data: PropertyEvent): Promise<void> {
     await this.notificationService.createPropertyRejectedNotification(data.ownerId, data.propertyId);
+  }
+
+  @MessagePattern('community.requested')
+  async handleCommunityRequested(@Payload() data: CommunityEvent): Promise<void> {
+    await this.notificationService.createCommunityRequestedNotification(
+      data.requestedById,
+      data.communityName,
+    );
+  }
+
+  @MessagePattern('community.approved')
+  async handleCommunityApproved(@Payload() data: CommunityEvent): Promise<void> {
+    await this.notificationService.createCommunityApprovedNotification(
+      data.requestedById,
+      data.communityName,
+    );
+  }
+
+  @MessagePattern('community.rejected')
+  async handleCommunityRejected(@Payload() data: CommunityEvent): Promise<void> {
+    await this.notificationService.createCommunityRejectedNotification(
+      data.requestedById,
+      data.communityName,
+    );
   }
 }

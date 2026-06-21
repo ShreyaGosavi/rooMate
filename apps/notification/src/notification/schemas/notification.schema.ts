@@ -10,7 +10,7 @@ export enum NotificationType {
   PROPERTY_REJECTED = 'PROPERTY_REJECTED',
   COMMUNITY_REQUESTED = 'COMMUNITY_REQUESTED',
   COMMUNITY_APPROVED = 'COMMUNITY_APPROVED',
-  NEW_POST = 'NEW_POST',
+  COMMUNITY_REJECTED = 'COMMUNITY_REJECTED',
 }
 
 @Schema({ timestamps: { createdAt: true, updatedAt: false } })

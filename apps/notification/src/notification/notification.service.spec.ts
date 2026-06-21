@@ -209,4 +209,43 @@ describe('NotificationService', () => {
       );
     });
   });
+
+  describe('createCommunityRequestedNotification', () => {
+    it('should create a community requested notification', async () => {
+      mockRepository.create.mockResolvedValue({});
+      await service.createCommunityRequestedNotification('user-1', 'COEP');
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-1',
+          type: 'COMMUNITY_REQUESTED',
+        }),
+      );
+    });
+  });
+
+  describe('createCommunityApprovedNotification', () => {
+    it('should create a community approved notification', async () => {
+      mockRepository.create.mockResolvedValue({});
+      await service.createCommunityApprovedNotification('user-1', 'COEP');
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-1',
+          type: 'COMMUNITY_APPROVED',
+        }),
+      );
+    });
+  });
+
+  describe('createCommunityRejectedNotification', () => {
+    it('should create a community rejected notification', async () => {
+      mockRepository.create.mockResolvedValue({});
+      await service.createCommunityRejectedNotification('user-1', 'COEP');
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: 'user-1',
+          type: 'COMMUNITY_REJECTED',
+        }),
+      );
+    });
+  });
 });

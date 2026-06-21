@@ -117,4 +117,65 @@ describe('EmailService', () => {
       );
     });
   });
+
+  describe('sendCommunityRequestedEmail', () => {
+    it('should send community requested email to admin', async () => {
+      await service.sendCommunityRequestedEmail(
+        'admin@roomate.in',
+        'COEP',
+        'Pune',
+        'user@test.com',
+      );
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'admin@roomate.in',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('COEP'),
+        }),
+      );
+    });
+  });
+
+  describe('sendCommunityRequestConfirmationEmail', () => {
+    it('should send confirmation email to user', async () => {
+      await service.sendCommunityRequestConfirmationEmail('user@test.com', 'COEP');
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'user@test.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('COEP'),
+        }),
+      );
+    });
+  });
+
+  describe('sendCommunityApprovedEmail', () => {
+    it('should send community approved email', async () => {
+      await service.sendCommunityApprovedEmail('user@test.com', 'COEP');
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'user@test.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('COEP'),
+        }),
+      );
+    });
+  });
+
+  describe('sendCommunityRejectedEmail', () => {
+    it('should send community rejected email', async () => {
+      await service.sendCommunityRejectedEmail('user@test.com', 'COEP');
+      expect(mockResendSend).toHaveBeenCalledTimes(1);
+      expect(mockResendSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'user@test.com',
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          subject: expect.stringContaining('COEP'),
+        }),
+      );
+    });
+  });
 });
