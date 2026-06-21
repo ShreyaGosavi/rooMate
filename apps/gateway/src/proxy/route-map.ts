@@ -9,4 +9,5 @@ export const ROUTE_MAP: ServiceRoute[] = [
   { prefix: 'listings', serviceUrlEnvKey: 'LISTING_SERVICE_URL' },
   { prefix: 'communities', serviceUrlEnvKey: 'COMMUNITY_SERVICE_URL' },
   { prefix: 'admin', serviceUrlEnvKey: 'ADMIN_SERVICE_URL' },
+  { prefix: 'conversations', serviceUrlEnvKey: 'CHAT_SERVICE_URL' },
 ];

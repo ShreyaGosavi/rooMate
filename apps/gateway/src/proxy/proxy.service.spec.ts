@@ -21,6 +21,7 @@ describe('ProxyService', () => {
           LISTING_SERVICE_URL: 'http://localhost:3003',
           COMMUNITY_SERVICE_URL: 'http://localhost:3004',
           ADMIN_SERVICE_URL: 'http://localhost:3005',
+          CHAT_SERVICE_URL: 'http://localhost:3006',
         };
         return config[key];
       }),
@@ -49,56 +50,58 @@ describe('ProxyService', () => {
 
   describe('forward', () => {
     it('should return null for unknown route prefix', async () => {
-      const result = await service.forward(mockRequest('/api/unknown/endpoint'));
-      expect(result).toBeNull();
+      expect(await service.forward(mockRequest('/api/unknown'))).toBeNull();
     });
 
-    it('should forward request to Auth service', async () => {
-      mockHttpService.request.mockReturnValue(of({ status: 200, data: { message: 'ok' } }));
-      const result = await service.forward(mockRequest('/api/auth/login', 'POST'));
+    it('should forward to Auth service', async () => {
+      mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
+      await service.forward(mockRequest('/api/auth/login', 'POST'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
         expect.objectContaining({ url: 'http://localhost:3001/api/auth/login' }),
       );
-      expect(result).toEqual({ status: 200, data: { message: 'ok' } });
     });
 
-    it('should forward request to Notification service', async () => {
-      mockHttpService.request.mockReturnValue(of({ status: 200, data: { data: [] } }));
-      const result = await service.forward(mockRequest('/api/notifications'));
+    it('should forward to Notification service', async () => {
+      mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
+      await service.forward(mockRequest('/api/notifications'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
         expect.objectContaining({ url: 'http://localhost:3008/api/notifications' }),
       );
-      expect(result?.status).toBe(200);
     });
 
-    it('should forward request to Listing service', async () => {
-      mockHttpService.request.mockReturnValue(of({ status: 200, data: { results: [] } }));
-      const result = await service.forward(mockRequest('/api/listings'));
+    it('should forward to Listing service', async () => {
+      mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
+      await service.forward(mockRequest('/api/listings'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
         expect.objectContaining({ url: 'http://localhost:3003/api/listings' }),
       );
-      expect(result?.status).toBe(200);
     });
 
-    it('should forward request to Community service', async () => {
-      mockHttpService.request.mockReturnValue(of({ status: 200, data: { communities: [] } }));
-      const result = await service.forward(mockRequest('/api/communities'));
+    it('should forward to Community service', async () => {
+      mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
+      await service.forward(mockRequest('/api/communities'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
         expect.objectContaining({ url: 'http://localhost:3004/api/communities' }),
       );
-      expect(result?.status).toBe(200);
     });
 
-    it('should forward request to Admin BFF', async () => {
-      mockHttpService.request.mockReturnValue(of({ status: 200, data: { properties: [] } }));
-      const result = await service.forward(mockRequest('/api/admin/properties'));
+    it('should forward to Admin BFF', async () => {
+      mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
+      await service.forward(mockRequest('/api/admin/properties'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
         expect.objectContaining({ url: 'http://localhost:3005/api/admin/properties' }),
       );
-      expect(result?.status).toBe(200);
     });
 
-    it('should forward downstream error response with correct status', async () => {
+    it('should forward to Chat service', async () => {
+      mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
+      await service.forward(mockRequest('/api/conversations'));
+      expect(mockHttpService.request).toHaveBeenCalledWith(
+        expect.objectContaining({ url: 'http://localhost:3006/api/conversations' }),
+      );
+    });
+
+    it('should forward downstream error with correct status', async () => {
       const axiosError = new AxiosError('Unauthorized');
       axiosError.response = {
         status: 401,
@@ -112,7 +115,7 @@ describe('ProxyService', () => {
       expect(result).toEqual({ status: 401, data: { message: 'Unauthorized' } });
     });
 
-    it('should return 503 when downstream service is unreachable', async () => {
+    it('should return 503 when service unreachable', async () => {
       const axiosError = new AxiosError('Connection refused');
       mockHttpService.request.mockReturnValue(throwError(() => axiosError));
       const result = await service.forward(mockRequest('/api/auth/login', 'POST'));

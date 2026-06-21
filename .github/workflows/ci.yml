@@ -199,3 +199,28 @@ jobs:
       - name: Test Admin service
         run: npm test
         working-directory: apps/admin
+  test-chat:
+    name: Lint and Test — Chat Service
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install root dependencies
+        run: npm install
+      - name: Install Chat service dependencies
+        run: npm install
+        working-directory: apps/chat
+      - name: Build shared-types
+        run: npm run build
+        working-directory: packages/shared-types
+      - name: Lint Chat service
+        run: npm run lint
+        working-directory: apps/chat
+      - name: Test Chat service
+        run: npm test
+        working-directory: apps/chat
