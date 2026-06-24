@@ -2,7 +2,7 @@ export const welcomeTemplate = (name: string) => ({
   to: '',
   from: {
     name: 'RooMate',
-    email: 'onboarding@resend.dev',
+    email: 'gosavishreya08@gmail.com',
   },
   subject: 'Welcome to RooMate!',
   html: `

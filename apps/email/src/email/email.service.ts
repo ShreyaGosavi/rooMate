@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Resend } from 'resend';
+import sgMail from '@sendgrid/mail';
 import { welcomeTemplate } from './templates/welcome.template';
 import { verificationTemplate } from './templates/verification.template';
 import { propertySubmittedTemplate } from './templates/property-submitted.template';
@@ -10,10 +10,9 @@ import { UserCreatedEvent } from '@roomate/shared-types';
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
-  private readonly resend: Resend;
 
   constructor() {
-    this.resend = new Resend(process.env.RESEND_API_KEY ?? '');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? '');
   }
 
   async sendWelcomeEmail(data: UserCreatedEvent): Promise<void> {
@@ -55,8 +54,8 @@ export class EmailService {
     const recipient = mail.to;
     for (let attempt = 1; attempt <= retries; attempt++) {
       try {
-        await this.resend.emails.send({
-          from: `${mail.from.name} <${mail.from.email}>`,
+        await sgMail.send({
+          from: { name: mail.from.name, email: mail.from.email },
           to: recipient,
           subject: mail.subject,
           html: mail.html,
