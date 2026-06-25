@@ -28,6 +28,7 @@ export class AuthRepository implements OnModuleInit {
         username: dto.username,
         phone: dto.phone,
         gender: dto.gender,
+        isEmailVerified: true,
       },
       select: {
         id: true,

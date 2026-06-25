@@ -5,11 +5,12 @@ import {
   Body,
   Query,
   Req,
+  Res,
   UseGuards,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
@@ -28,9 +29,15 @@ export class AuthController {
   }
 
   @Get('verify-email')
-  async verifyEmail(@Query('token') token: string) {
-    await this.authService.verifyEmail(token);
-    return { message: 'Email verified successfully' };
+  async verifyEmail(@Query('token') token: string, @Res() res: Response) {
+    const email = await this.authService.verifyEmail(token);
+    return res.redirect(`http://localhost:3000/email-verified?email=${encodeURIComponent(email)}`);
+  }
+
+  @Get('verification-status')
+  async verificationStatus(@Query('email') email: string) {
+    const verified = await this.authService.checkVerificationStatus(email);
+    return { verified };
   }
 
   @Post('signup')
