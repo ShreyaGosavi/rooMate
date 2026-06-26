@@ -9,6 +9,13 @@ async function bootstrap() {
     bodyParser: false,
   });
 
+  app.enableCors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  });
+
   app.use((req: Request, res: Response, next: NextFunction) => {
     const contentType = req.headers['content-type'] ?? '';
     if (contentType.includes('multipart/form-data')) {
@@ -26,7 +33,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 3007);
 }
+
 bootstrap().catch(console.error);

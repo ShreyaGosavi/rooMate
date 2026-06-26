@@ -44,6 +44,7 @@ export class UpdatePropertyDto {
 }
 
 export class FilterPropertiesDto {
+  search?: string;
   lat?: number;
   lng?: number;
   radius?: number;

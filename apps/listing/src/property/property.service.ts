@@ -13,6 +13,7 @@ import {
   FilterPropertiesDto,
 } from "./property.dto";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 import { Prisma, PropertyVerificationStatus } from "../prisma/generated";
 
 @Injectable()
@@ -104,11 +105,14 @@ export class PropertyService {
       gender,
       propertyType,
       bhk,
+      search,
       page = 1,
       limit = 10,
     } = filters;
 
-    const offset = (page - 1) * limit;
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const offset = (pageNum - 1) * limitNum;
 
     if (lat && lng) {
       const results = await this.prisma.$queryRaw<any[]>`
@@ -135,27 +139,82 @@ export class PropertyService {
     const where: any = {
       verificationStatus: PropertyVerificationStatus.VERIFIED,
       isAvailable: true,
-      ...(minRent && maxRent && { rent: { gte: minRent, lte: maxRent } }),
-      ...(minRent && !maxRent && { rent: { gte: minRent } }),
-      ...(maxRent && !minRent && { rent: { lte: maxRent } }),
+      ...(minRent && maxRent && { rent: { gte: Number(minRent), lte: Number(maxRent) } }),
+      ...(minRent && !maxRent && { rent: { gte: Number(minRent) } }),
+      ...(maxRent && !minRent && { rent: { lte: Number(maxRent) } }),
       ...(gender && { genderPreference: gender }),
       ...(propertyType && { propertyType }),
       ...(bhk && { bhk }),
     };
 
+    if (search) {
+      const cleanSearch = (search as string).replace(/^near\s+/i, '').trim();
+      const searchTerm = `%${cleanSearch}%`;
+
+      const textResults = await this.prisma.$queryRaw<{ id: string }[]>`
+        SELECT id FROM "Property"
+        WHERE "verificationStatus" = 'VERIFIED'
+        AND "isAvailable" = true
+        AND (
+          title ILIKE ${searchTerm}
+          OR city ILIKE ${searchTerm}
+          OR locality ILIKE ${searchTerm}
+          OR district ILIKE ${searchTerm}
+          OR "formattedAddress" ILIKE ${searchTerm}
+          OR "addressLine1" ILIKE ${searchTerm}
+          OR EXISTS (
+            SELECT 1 FROM unnest("suitableFitFor") AS place
+            WHERE place ILIKE ${searchTerm}
+          )
+        )
+      `;
+
+      let geoIds: string[] = [];
+      try {
+        const googleKey = process.env.GOOGLE_MAPS_KEY;
+        const geoRes = await axios.get(
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(cleanSearch)}&key=${googleKey}&region=in`
+        );
+        if (geoRes.data.results?.length > 0) {
+          const { lat: gLat, lng: gLng } = geoRes.data.results[0].geometry.location;
+          const radiusKm = 5;
+          const geoResults = await this.prisma.$queryRaw<{ id: string }[]>`
+            SELECT id FROM "Property"
+            WHERE "verificationStatus" = 'VERIFIED'
+            AND "isAvailable" = true
+            AND (
+              6371 * acos(
+                cos(radians(${gLat})) * cos(radians(CAST(latitude AS FLOAT))) *
+                cos(radians(CAST(longitude AS FLOAT)) - radians(${gLng})) +
+                sin(radians(${gLat})) * sin(radians(CAST(latitude AS FLOAT)))
+              )
+            ) <= ${radiusKm}
+          `;
+          geoIds = geoResults.map((r: any) => r.id);
+          this.logger.log(`Geocoded "${cleanSearch}" to ${gLat},${gLng} - ${geoIds.length} nearby`);
+        }
+      } catch (e: any) {
+        this.logger.warn(`Geocoding failed: ${e.message}`);
+      }
+
+      const allIds = [...new Set([...textResults.map((r: any) => r.id), ...geoIds])];
+      where.id = allIds.length > 0 ? { in: allIds } : { in: [] };
+    }
+
     const [results, total] = await Promise.all([
       this.prisma.property.findMany({
         where,
         skip: offset,
-        take: limit,
+        take: limitNum,
         orderBy: { createdAt: "desc" },
         include: { PropertyStats: true },
       }),
       this.prisma.property.count({ where }),
     ]);
 
-    return { results, total, page, limit };
+    return { results, total, page: pageNum, limit: limitNum };
   }
+
 
   async findById(propertyId: string) {
     const property = await this.prisma.property.findUnique({

@@ -20,7 +20,7 @@ export class ProxyService {
 
   async forward(req: Request): Promise<ProxyResult | null> {
     const pathAfterApi = req.originalUrl.replace(/^\/api\//, '');
-    const [prefix] = pathAfterApi.split('/');
+    const [prefix] = pathAfterApi.split('/')[0].split('?');
     const route = ROUTE_MAP.find((r) => r.prefix === prefix);
 
     if (!route) return null;
