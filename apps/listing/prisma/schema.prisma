@@ -11,16 +11,15 @@ datasource db {
 model Property {
   id                 String                     @id @default(cuid())
   title              String
-  description        String
   propertyType       PropertyType
   rent               Int
   deposit            Int
   maintenance        Int
-  isAvailable        Boolean                    @default(true)
   sharing            Int
+  isAvailable        Boolean                    @default(true)
   genderPreference   Gender
   bhk                BHK
-  suitableFitFor     String?
+  suitableFitFor     String[]
   addressLine1       String
   addressLine2       String?
   locality           String
@@ -36,6 +35,7 @@ model Property {
   ownerId            String
   ownerPhone         String
   visitingHrs        String?
+  availableFrom      DateTime?
   ownershipProof     String?
   verifiedAt         DateTime?
   amenities          AmenityType[]
@@ -115,8 +115,7 @@ enum Gender {
 }
 
 enum PropertyType {
-  HOSTEL
-  PG
+  PG_HOSTEL
   APARTMENT
   OTHER
 }

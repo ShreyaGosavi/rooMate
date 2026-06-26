@@ -50,7 +50,6 @@ export class PropertyService {
       data: {
         id: propertyId,
         title: dto.title,
-        description: dto.description,
         propertyType: dto.propertyType,
         rent: dto.rent,
         deposit: dto.deposit,
@@ -58,7 +57,6 @@ export class PropertyService {
         sharing: dto.sharing,
         genderPreference: dto.genderPreference,
         bhk: dto.bhk,
-        suitableFitFor: dto.suitableFitFor,
         addressLine1: dto.addressLine1,
         addressLine2: dto.addressLine2,
         locality: dto.locality,
@@ -73,6 +71,8 @@ export class PropertyService {
         placeId: dto.placeId,
         ownerPhone: dto.ownerPhone,
         visitingHrs: dto.visitingHrs,
+        availableFrom: dto.availableFrom,
+        suitableFitFor: { set: dto.suitableFitFor },
         amenities: { set: dto.amenities },
         rules: (dto.rules ?? {}) as Prisma.InputJsonValue,
         ownerId,
@@ -208,7 +208,6 @@ export class PropertyService {
 
     const data: Prisma.PropertyUpdateInput = {
       ...(dto.title && { title: dto.title }),
-      ...(dto.description && { description: dto.description }),
       ...(dto.rent && { rent: dto.rent }),
       ...(dto.deposit && { deposit: dto.deposit }),
       ...(dto.maintenance && { maintenance: dto.maintenance }),
@@ -217,7 +216,8 @@ export class PropertyService {
       ...(dto.visitingHrs && { visitingHrs: dto.visitingHrs }),
       ...(dto.amenities && { amenities: { set: dto.amenities } }),
       ...(dto.rules && { rules: dto.rules as Prisma.InputJsonValue }),
-      ...(dto.suitableFitFor && { suitableFitFor: dto.suitableFitFor }),
+      ...(dto.suitableFitFor && { suitableFitFor: { set: dto.suitableFitFor } }),
+      ...(dto.availableFrom && { availableFrom: dto.availableFrom }),
     };
 
     return this.prisma.property.update({

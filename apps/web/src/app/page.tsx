@@ -164,93 +164,94 @@ export default function Home() {
         </>
       ) : (
         <>
-          {/* How it Works */}
-          <section id="how-it-works" className="py-20 bg-white">
+          {/* Who is RooMate for - logged out only */}
+          <section id="who-for-lo" className="py-16">
             <div className="mx-auto max-w-7xl px-6">
-              <SectionHeading>How it Works</SectionHeading>
-              <div className="mt-16 space-y-16">
+              <SectionHeading>Who is RooMate for?</SectionHeading>
+              <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-4">
                 {[
-                  {
-                    title: 'Sign Up in minutes',
-                    steps: ['Enter your email address', 'Verify via email link', 'Complete your profile'],
-                  },
-                  {
-                    title: 'List a Property',
-                    steps: ['Basic details — type, BHK, rent', 'Add address & amenities', 'Upload photos & proof', 'Submit for verification', 'Go live in 24hrs'],
-                  },
-                  {
-                    title: 'Find a Room',
-                    steps: ['Search by location & budget', 'Browse verified listings', 'Message the owner directly'],
-                  },
-                ].map((flow, fi) => (
-                  <div key={fi}>
-                    <p className="mb-8 text-base font-bold text-[#061b32]">{flow.title}</p>
-                    <div className="relative flex gap-6 overflow-x-auto pb-2">
-                      {flow.steps.map((s, i) => (
-                        <div key={i} className="flex items-center gap-4">
-                          <div className="flex flex-col items-center gap-2 min-w-[120px] text-center">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9fdbda] text-sm font-bold text-[#061b32] shadow-sm">
-                              {i + 1}
-                            </div>
-                            <p className="text-xs font-medium text-[#061b32]/70 leading-snug">{s}</p>
-                          </div>
-                          {i < flow.steps.length - 1 && (
-                            <div className="h-[2px] w-10 shrink-0 border-t-2 border-dashed border-[#9fdbda]/50 mb-5" />
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                  { title: 'Property Owners', desc: 'List your property and find verified tenants fast.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
+                  { title: 'Students', desc: 'Find affordable rooms near your college.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> },
+                  { title: 'Working Professionals', desc: 'Find flatmates who match your lifestyle.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> },
+                  { title: 'Anyone', desc: 'Looking for a roommate or a room to rent.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+                ].map((item) => (
+                  <div key={item.title} className="group rounded-2xl bg-white p-6 shadow-sm border border-[#061b32]/5 text-center transition-all duration-300 hover:shadow-lg hover:border-[#9fdbda] hover:-translate-y-1 cursor-default">
+                    <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#9fdbda]/20 text-[#061b32] transition-all duration-300 group-hover:bg-[#9fdbda]">{item.icon}</div>
+                    <h3 className="mt-4 font-semibold text-[#061b32]">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[#061b32]/60">{item.desc}</p>
                   </div>
                 ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Features - logged out only */}
+          <section id="features-lo" className="py-16">
+            <div className="mx-auto max-w-7xl px-6">
+              <SectionHeading>Features</SectionHeading>
+              <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-4">
+                {[
+                  { title: 'Verified Listings', desc: 'Every property verified by our team within 24 hours.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> },
+                  { title: 'Community', desc: 'Join your college or office community and connect.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
+                  { title: 'Direct Chat', desc: 'Message property owners directly from the listing.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
+                  { title: 'Safe & Secure', desc: 'Your data and privacy are our top priority.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
+                ].map((item) => (
+                  <div key={item.title} className="group rounded-2xl bg-[#061b32] p-7 transition-all duration-300 hover:bg-[#9fdbda] hover:shadow-xl hover:-translate-y-1 cursor-default">
+                    <div className="text-[#9fdbda] transition-colors duration-300 group-hover:text-[#061b32]">{item.icon}</div>
+                    <h3 className="mt-5 font-semibold text-white transition-colors duration-300 group-hover:text-[#061b32]">{item.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[#9fdbda]/70 transition-colors duration-300 group-hover:text-[#061b32]/70">{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* How it Works - logged out only */}
+          <section id="how-it-works" className="py-16">
+            <div className="mx-auto max-w-7xl px-6">
+              <SectionHeading>How it Works</SectionHeading>
+              <div className="mt-12">
+                <p className="mb-8 text-base font-bold text-[#061b32]">Sign Up</p>
+                <div className="relative grid grid-cols-3 gap-8">
+                  <div className="absolute top-5 left-[16%] right-[16%] hidden h-0 border-t-2 border-dashed border-[#9fdbda]/60 md:block" />
+                  {[
+                    { title: '1. Enter your email', desc: 'Provide your email address to get started.', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> },
+                    { title: '2. Verify your email', desc: 'Click the verification link sent to your inbox.', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
+                    { title: '3. Complete your profile', desc: 'Add your username, phone and gender.', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
+                  ].map((item) => (
+                    <div key={item.title} className="relative flex flex-col items-center text-center">
+                      <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[#9fdbda] shadow-sm">{item.icon}</div>
+                      <p className="mt-4 font-semibold text-[#061b32]">{item.title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-[#061b32]/60">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-14">
+                <p className="mb-8 text-base font-bold text-[#061b32]">List a Property</p>
+                <div className="relative grid grid-cols-5 gap-4">
+                  <div className="absolute top-5 left-[8%] right-[8%] hidden h-0 border-t-2 border-dashed border-[#9fdbda]/60 md:block" />
+                  {[
+                    { title: '1. Basic details', desc: 'Type, BHK, rent and deposit.', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg> },
+                    { title: '2. Address', desc: 'We pin it on the map for you.', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> },
+                    { title: '3. Amenities', desc: 'Rules, amenities and hours.', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> },
+                    { title: '4. Photos & Proof', desc: 'Upload photos and ownership proof.', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> },
+                    { title: '5. Submit', desc: 'Verified in 24hrs, then live.', icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#061b32" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> },
+                  ].map((item) => (
+                    <div key={item.title} className="relative flex flex-col items-center text-center">
+                      <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full bg-[#9fdbda] shadow-sm">{item.icon}</div>
+                      <p className="mt-4 text-sm font-semibold text-[#061b32]">{item.title}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-[#061b32]/60">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
         </>
       )}
 
-      {/* Who is RooMate for */}
-      <section id="who-for" className="py-20">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading>Who is RooMate for?</SectionHeading>
-          <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-4">
-            {[
-              { title: 'Property Owners', desc: 'List your property and find verified tenants fast.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
-              { title: 'Students', desc: 'Find affordable rooms near your college.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> },
-              { title: 'Working Professionals', desc: 'Find flatmates who match your lifestyle.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg> },
-              { title: 'Anyone', desc: 'Looking for a roommate or a room to rent.', icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
-            ].map((item) => (
-              <div key={item.title} className="group rounded-2xl bg-white p-6 shadow-sm border border-[#061b32]/5 text-center transition-all duration-300 hover:shadow-lg hover:border-[#9fdbda] hover:-translate-y-1 cursor-default">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#9fdbda]/20 text-[#061b32] transition-all duration-300 group-hover:bg-[#9fdbda]">
-                  {item.icon}
-                </div>
-                <h3 className="mt-4 font-semibold text-[#061b32]">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#061b32]/60">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Features */}
-      <section id="features" className="py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-6">
-          <SectionHeading>Features</SectionHeading>
-          <div className="mt-12 grid grid-cols-2 gap-5 md:grid-cols-4">
-            {[
-              { title: 'Verified Listings', desc: 'Every property verified by our team within 24 hours.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg> },
-              { title: 'Community', desc: 'Join your college or office community and connect.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> },
-              { title: 'Direct Chat', desc: 'Message property owners directly from the listing.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> },
-              { title: 'Safe & Secure', desc: 'Your data and privacy are our top priority.', icon: <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> },
-            ].map((item) => (
-              <div key={item.title} className="group rounded-2xl bg-[#061b32] p-7 transition-all duration-300 hover:bg-[#9fdbda] hover:shadow-xl hover:-translate-y-1 cursor-default">
-                <div className="text-[#9fdbda] transition-colors duration-300 group-hover:text-[#061b32]">{item.icon}</div>
-                <h3 className="mt-5 font-semibold text-white transition-colors duration-300 group-hover:text-[#061b32]">{item.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#9fdbda]/70 transition-colors duration-300 group-hover:text-[#061b32]/70">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* About Us */}
       <section id="about" className="py-20">
