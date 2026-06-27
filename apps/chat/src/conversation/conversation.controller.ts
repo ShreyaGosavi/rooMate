@@ -9,10 +9,10 @@ import {
   Request,
 } from "@nestjs/common";
 import { ConversationService } from "./conversation.service";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 
 @Controller("conversations")
-@UseGuards(JwtAuthGuard)
+@UseGuards(GatewayGuard)
 export class ConversationController {
   constructor(private readonly conversationService: ConversationService) {}
 

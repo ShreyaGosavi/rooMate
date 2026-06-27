@@ -14,7 +14,7 @@ import {
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { PropertyService } from "./property.service";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 import {
   UpdatePropertyDto,
   FilterPropertiesDto,
@@ -27,7 +27,7 @@ export class PropertyController {
   constructor(private readonly propertyService: PropertyService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: "photos", maxCount: 10 },
@@ -59,7 +59,7 @@ export class PropertyController {
   }
 
   @Get("my")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   findMyListings(@Request() req: any) {
     return this.propertyService.findMyListings(req.user.id);
   }
@@ -75,7 +75,7 @@ export class PropertyController {
   }
 
   @Patch(":id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   update(
     @Param("id") id: string,
     @Request() req: any,
@@ -85,13 +85,13 @@ export class PropertyController {
   }
 
   @Delete(":id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   remove(@Param("id") id: string, @Request() req: any) {
     return this.propertyService.remove(id, req.user.id);
   }
 
   @Patch(":id/verify")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   verify(
     @Param("id") id: string,
     @Body() body: { status: PropertyVerificationStatus; ownerEmail: string },

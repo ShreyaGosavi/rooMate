@@ -1,3 +1,4 @@
+import { GatewayGuard } from "../auth/gateway.guard";
 import {
   Controller,
   Get,
@@ -20,7 +21,7 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Get()
-  @UseGuards(JwtGuard)
+  @UseGuards(GatewayGuard)
   async getNotifications(
     @Req() req: Request,
     @Query() query: NotificationQueryDto,
@@ -30,14 +31,14 @@ export class NotificationController {
   }
 
   @Get('unread-count')
-  @UseGuards(JwtGuard)
+  @UseGuards(GatewayGuard)
   async getUnreadCount(@Req() req: Request) {
     const user = req.user as { id: string };
     return this.notificationService.getUnreadCount(user.id);
   }
 
   @Patch('mark-all-read')
-  @UseGuards(JwtGuard)
+  @UseGuards(GatewayGuard)
   @HttpCode(HttpStatus.OK)
   async markAllRead(@Req() req: Request) {
     const user = req.user as { id: string };
@@ -45,7 +46,7 @@ export class NotificationController {
   }
 
   @Patch(':id/read')
-  @UseGuards(JwtGuard)
+  @UseGuards(GatewayGuard)
   @HttpCode(HttpStatus.OK)
   async markOneRead(@Param('id') id: string, @Req() req: Request) {
     const user = req.user as { id: string };
@@ -53,7 +54,7 @@ export class NotificationController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtGuard)
+  @UseGuards(GatewayGuard)
   @HttpCode(HttpStatus.OK)
   async deleteOne(@Param('id') id: string, @Req() req: Request) {
     const user = req.user as { id: string };

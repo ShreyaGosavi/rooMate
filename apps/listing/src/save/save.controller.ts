@@ -8,10 +8,10 @@ import {
   Request,
 } from "@nestjs/common";
 import { SaveService } from "./save.service";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 
 @Controller("listings")
-@UseGuards(JwtAuthGuard)
+@UseGuards(GatewayGuard)
 export class SaveController {
   constructor(private readonly saveService: SaveService) {}
 
