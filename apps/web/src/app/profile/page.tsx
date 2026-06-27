@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import api from '@/lib/api';
 import { isLoggedIn, clearTokens } from '@/lib/auth';
+import { useSearchParams } from 'next/navigation';
 
 const BHK_LABELS: Record<string, string> = {
   ONE_RK: '1 RK', ONE_BHK: '1 BHK', TWO_BHK: '2 BHK', THREE_BHK: '3 BHK', FOUR_BHK: '4 BHK',
@@ -18,7 +19,8 @@ const TABS = ['Overview', 'My Listings', 'Saved', 'Communities'];
 
 export default function ProfilePage() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState('Overview');
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'Overview');
   const [user, setUser] = useState<any>(null);
   const [myListings, setMyListings] = useState<any[]>([]);
   const [savedProperties, setSavedProperties] = useState<any[]>([]);

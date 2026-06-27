@@ -11,3 +11,12 @@ export const ROUTE_MAP: ServiceRoute[] = [
   { prefix: 'admin', serviceUrlEnvKey: 'ADMIN_SERVICE_URL' },
   { prefix: 'conversations', serviceUrlEnvKey: 'CHAT_SERVICE_URL' },
 ];
+
+// These prefixes require a valid JWT
+export const PROTECTED_PREFIXES: string[] = [
+  'notifications',
+  'conversations',
+];
+
+// Auth and listings/communities have mixed public/private routes
+// so they handle their own auth internally
