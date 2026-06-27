@@ -91,4 +91,6 @@ enum RequestStatus {
 enum NoticeType {
   ROOMMATE_NEEDED
   SPARE_ITEM_GIVEAWAY
+  MESS_RECOMMENDATION
+  GENERAL
 }

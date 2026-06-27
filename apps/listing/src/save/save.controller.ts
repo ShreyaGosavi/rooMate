@@ -25,7 +25,7 @@ export class SaveController {
     return this.saveService.unsave(req.user.id, id);
   }
 
-  @Get("saved")
+  @Get("my/saved")
   getSaved(@Request() req: any) {
     return this.saveService.getSaved(req.user.id);
   }

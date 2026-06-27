@@ -146,7 +146,7 @@ export class AuthService {
     const payload: JwtPayload = { sub: userId, email, isAdmin };
     const accessToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_ACCESS_SECRET'),
-      expiresIn: '15m',
+      expiresIn: '7d',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
@@ -154,5 +154,9 @@ export class AuthService {
     });
     await this.redis.set(`refresh:${userId}`, refreshToken, 'EX', 604800);
     return { accessToken, refreshToken };
+  }
+
+  async getUserById(id: string) {
+    return this.authRepository.findById(id);
   }
 }

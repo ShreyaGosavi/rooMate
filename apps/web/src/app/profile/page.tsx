@@ -37,13 +37,19 @@ export default function ProfilePage() {
       const [userRes, listingsRes, savedRes, commRes] = await Promise.allSettled([
         api.get('/api/auth/me'),
         api.get('/api/listings/my'),
-        api.get('/api/listings/saved'),
+        api.get('/api/listings/my/saved'),
         api.get('/api/communities/my'),
       ]);
       if (userRes.status === 'fulfilled') setUser(userRes.value.data);
       if (listingsRes.status === 'fulfilled') setMyListings(listingsRes.value.data || []);
-      if (savedRes.status === 'fulfilled') setSavedProperties(savedRes.value.data || []);
-      if (commRes.status === 'fulfilled') setCommunities(commRes.value.data || []);
+      if (savedRes.status === 'fulfilled') {
+        const raw = savedRes.value.data || [];
+        setSavedProperties(raw.map((s: any) => s.Property || s));
+      }
+      if (commRes.status === 'fulfilled') {
+        const commData = commRes.value.data || [];
+        setCommunities(Array.isArray(commData) ? commData.map((c: any) => c.community || c) : []);
+      }
     } catch {} finally { setLoading(false); }
   };
 

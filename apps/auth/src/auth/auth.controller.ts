@@ -4,6 +4,7 @@ import {
   Get,
   Body,
   Query,
+  Param,
   Req,
   Res,
   UseGuards,
@@ -71,5 +72,10 @@ export class AuthController {
   @UseGuards(JwtGuard)
   me(@Req() req: Request) {
     return req.user;
+  }
+
+  @Get('users/:id')
+  async getUserById(@Param('id') id: string) {
+    return this.authService.getUserById(id);
   }
 }

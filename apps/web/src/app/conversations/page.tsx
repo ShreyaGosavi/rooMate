@@ -18,6 +18,7 @@ export default function ConversationsPage() {
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [myUserId, setMyUserId] = useState('');
+  const [usernames, setUsernames] = useState<Record<string, string>>({});
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -57,9 +58,28 @@ export default function ConversationsPage() {
 
   const fetchConversations = async (autoOpenId?: string) => {
     try {
+      console.log('Fetching conversations...');
       const res = await api.get('/api/conversations');
+      console.log('Conversations response:', res.data);
       const convs = res.data || [];
       setConversations(convs);
+
+      // Resolve usernames
+      const token = localStorage.getItem('accessToken');
+      const myId = token ? JSON.parse(atob(token.split('.')[1] + '==')).sub : '';
+      const otherIds = [...new Set(convs.map((c: any) =>
+        c.participant1Id === myId ? c.participant2Id : c.participant1Id
+      ))] as string[];
+      const resolved: Record<string, string> = {};
+      await Promise.all(otherIds.map(async (id: string) => {
+        try {
+          const r = await api.get(`/api/auth/users/${id}`);
+          resolved[id] = r.data?.username || id.slice(0, 8);
+        } catch { resolved[id] = id.slice(0, 8); }
+      }));
+      console.log('Resolved:', resolved);
+      setUsernames(resolved);
+
       if (autoOpenId) {
         const target = convs.find((c: any) => c._id === autoOpenId);
         if (target) openConversation(target);
@@ -112,12 +132,13 @@ export default function ConversationsPage() {
   };
 
   const getOtherParticipant = (conv: any) => {
-    return conv.participants?.find((p: any) => p.userId !== myUserId) || conv.participants?.[0];
+    const otherId = conv.participant1Id === myUserId ? conv.participant2Id : conv.participant1Id;
+    return { userId: otherId, username: usernames[otherId] || otherId?.slice(0, 8) };
   };
 
   const filteredConvs = conversations.filter(c => {
     const other = getOtherParticipant(c);
-    return other?.username?.toLowerCase().includes(search.toLowerCase());
+    return other?.username?.toLowerCase().includes(search.toLowerCase()) || !search;
   });
 
   // Group messages by date
