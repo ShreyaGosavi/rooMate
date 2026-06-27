@@ -1,4 +1,5 @@
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { HttpModule } from "@nestjs/axios";
 import { AuthModule } from "./auth/auth.module";
 import { AdminHttpService } from "./admin.http.service";
@@ -7,7 +8,8 @@ import { CommunityController } from "./community/community.controller";
 import { StatsController } from "./stats/stats.controller";
 
 @Module({
-  imports: [HttpModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),HttpModule, AuthModule],
   controllers: [PropertyController, CommunityController, StatsController],
   providers: [AdminHttpService],
 })
