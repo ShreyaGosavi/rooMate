@@ -155,8 +155,8 @@ export default function ConversationsPage() {
   });
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden">
-      <div className="w-80 shrink-0 border-r border-[#e2e8f0] flex flex-col">
+    <div className="flex h-screen bg-white overflow-hidden relative">
+      <div className={`${activeConv ? "hidden md:flex" : "flex"} w-full md:w-80 shrink-0 border-r border-[#e2e8f0] flex-col`}>
         <div className="px-5 py-4 border-b border-[#e2e8f0]">
           <div className="flex items-center justify-between mb-4">
             <Link href="/"><Image src="/logo.svg" alt="RooMate" width={100} height={26} priority /></Link>
@@ -216,9 +216,12 @@ export default function ConversationsPage() {
       </div>
 
       {activeConv ? (
-        <div className="flex-1 flex flex-col min-w-0">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0]">
+        <div className="flex-1 flex flex-col min-w-0 w-full">
+          <div className="flex items-center justify-between px-4 md:px-6 py-4 border-b border-[#e2e8f0]">
             <div className="flex items-center gap-3">
+              <button onClick={() => setActiveConv(null)} className="md:hidden text-[#061b32]/50 hover:text-[#061b32] mr-1">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
+              </button>
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9fdbda]/20 text-sm font-bold text-[#061b32]">
                 {getOtherParticipant(activeConv)?.username?.slice(0, 2).toUpperCase() || '??'}
               </div>

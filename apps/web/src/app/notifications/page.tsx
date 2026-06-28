@@ -118,7 +118,7 @@ export default function NotificationsPage() {
 
       <div className="flex min-h-[calc(100vh-64px)]">
         {/* Left — notifications (3/4) */}
-        <div className="w-[60%] px-8 py-8 border-r border-[#e2e8f0]">
+        <div className="w-full lg:w-[60%] px-4 md:px-8 py-8 lg:border-r border-[#e2e8f0]">
           {/* Header */}
           <div className="flex items-start justify-between mb-6">
             <div className="flex items-center gap-3">
@@ -209,7 +209,7 @@ export default function NotificationsPage() {
         </div>
 
         {/* Right — illustration (1/4) */}
-        <div className="hidden lg:flex w-[40%] shrink-0 flex-col items-center justify-center px-8 py-8">
+        <div className="hidden xl:flex w-[40%] shrink-0 flex-col items-center justify-center px-8 py-8">
           <Image src="/notification.svg" alt="Notifications" width={280} height={280} className="w-full" />
           <p className="mt-6 text-center text-sm font-medium text-[#061b32]">Never miss an update</p>
           <p className="mt-1 text-center text-xs text-[#061b32]/40">Get notified about your listings, community activity and more.</p>

@@ -158,9 +158,9 @@ export default function ProfilePage() {
         </div>
       </nav>
 
-      <div className="flex min-h-[calc(100vh-64px)]">
+      <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Left sidebar — user card */}
-        <div className="w-72 shrink-0 border-r border-[#e2e8f0] bg-white p-6 flex flex-col">
+        <div className="w-full md:w-72 shrink-0 border-b md:border-b-0 md:border-r border-[#e2e8f0] bg-white p-6 flex flex-col">
           {loading ? (
             <div className="animate-pulse space-y-4">
               <div className="h-20 w-20 rounded-full bg-[#f0f7f7] mx-auto" />
