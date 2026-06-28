@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Outfit } from 'next/font/google';
 import './globals.css';
+import { ToastContainer } from '@/components/ui/toast';
 
 const outfit = Outfit({
   variable: '--font-outfit',
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en" className={`${outfit.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-[#fafafa] text-[#061b32]">
         {children}
+        <ToastContainer />
       </body>
     </html>
   );
