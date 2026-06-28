@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import sgMail from '@sendgrid/mail';
+import { communitySubmittedTemplate } from './templates/community-submitted.template';
+import { communityApprovedTemplate } from './templates/community-approved.template';
+import { communityRejectedTemplate } from './templates/community-rejected.template';
 import { welcomeTemplate } from './templates/welcome.template';
 import { verificationTemplate } from './templates/verification.template';
 import { propertySubmittedTemplate } from './templates/property-submitted.template';
@@ -39,6 +42,36 @@ export class EmailService {
   async sendPropertyRejectedEmail(ownerEmail: string): Promise<void> {
     const mail = propertyRejectedTemplate(ownerEmail);
     await this.sendWithRetry(mail, 'property-rejected');
+  }
+
+  async sendCommunitySubmittedEmail(toEmail: string, communityName: string): Promise<void> {
+    const mail = {
+      to: toEmail,
+      from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
+      subject: `Your community request for "${communityName}" has been received`,
+      html: communitySubmittedTemplate(communityName),
+    };
+    await this.sendWithRetry(mail, 'community-submitted');
+  }
+
+  async sendCommunityApprovedEmail(toEmail: string, communityName: string): Promise<void> {
+    const mail = {
+      to: toEmail,
+      from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
+      subject: `Your community "${communityName}" is now live!`,
+      html: communityApprovedTemplate(communityName),
+    };
+    await this.sendWithRetry(mail, 'community-approved');
+  }
+
+  async sendCommunityRejectedEmail(toEmail: string, communityName: string): Promise<void> {
+    const mail = {
+      to: toEmail,
+      from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
+      subject: `Update on your community request: ${communityName}`,
+      html: communityRejectedTemplate(communityName),
+    };
+    await this.sendWithRetry(mail, 'community-rejected');
   }
 
   private async sendWithRetry(

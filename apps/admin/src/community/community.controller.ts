@@ -36,7 +36,7 @@ export class CommunityController {
   @Get("requests")
   getCommunityRequests(@Request() req: any) {
     return this.http.get(
-      `${this.communityUrl}/api/communities/my/requests`,
+      `${this.communityUrl}/api/communities/admin/requests`,
       extractToken(req),
       undefined,
       extractUserHeaders(req),

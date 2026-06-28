@@ -189,18 +189,25 @@ export default function AdminPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {communities.map(c => (
+                                    {communities.map(c => {
+                    const cr = c as any;
+                    return (
                     <div key={c.id} className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
                       <div className="flex items-start justify-between gap-4">
-                        <div>
-                          <h3 className="font-semibold text-[#061b32]">{c.name}</h3>
-                          {c.description && <p className="mt-1 text-sm text-[#061b32]/50 line-clamp-2">{c.description}</p>}
-                          <p className="mt-2 text-xs text-[#061b32]/40">Requested {formatDate(c.createdAt)}</p>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-[#061b32]">{cr.communityName ?? cr.name}</h3>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {cr.type && <span className="rounded-full bg-[#9fdbda]/20 px-2.5 py-0.5 text-xs font-medium text-[#061b32]">{cr.type}</span>}
+                            {cr.city && <span className="rounded-full bg-[#f0f7f7] px-2.5 py-0.5 text-xs text-[#061b32]/60">{cr.city}</span>}
+                            {cr.officialWebsite && <a href={cr.officialWebsite} target="_blank" rel="noopener noreferrer" className="rounded-full bg-[#f0f7f7] px-2.5 py-0.5 text-xs text-[#9fdbda] hover:opacity-80">Website ↗</a>}
+                          </div>
+                          {cr.email && <p className="mt-1.5 text-xs text-[#061b32]/50">📧 {cr.email}</p>}
+                          <p className="mt-1.5 text-xs text-[#061b32]/40">Requested {formatDate(c.createdAt)}</p>
                         </div>
                         <div className="flex shrink-0 gap-2">
                           <button onClick={() => updateCommunity(c.id, 'APPROVED')} disabled={!!actionLoading}
                             className="rounded-xl bg-[#9fdbda] px-4 py-2 text-sm font-semibold text-[#061b32] hover:opacity-80 disabled:opacity-40">
-                            {actionLoading === c.id + 'VERIFIED' ? '...' : 'Approve'}
+                            {actionLoading === c.id + 'APPROVED' ? '...' : 'Approve'}
                           </button>
                           <button onClick={() => updateCommunity(c.id, 'REJECTED')} disabled={!!actionLoading}
                             className="rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-500 hover:bg-red-100 disabled:opacity-40">
@@ -209,7 +216,8 @@ export default function AdminPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )
             )}

@@ -65,4 +65,9 @@ export class CommunityController {
   ) {
     return this.communityService.updateRequestStatus(requestId, dto.status);
   }
+  @Get("admin/requests")
+  findAllPendingRequests() {
+    return this.communityService.findAllPendingRequests();
+  }
+
 }

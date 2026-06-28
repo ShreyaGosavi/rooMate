@@ -32,4 +32,19 @@ export class NotificationConsumer {
   async handlePropertyRejected(@Payload() data: PropertyEvent): Promise<void> {
     await this.notificationService.createPropertyRejectedNotification(data.ownerId, data.propertyId);
   }
+
+  @MessagePattern('community.requested')
+  async handleCommunityRequested(@Payload() data: { requestedById: string; communityName: string }): Promise<void> {
+    await this.notificationService.createCommunityRequestedNotification(data.requestedById, data.communityName);
+  }
+
+  @MessagePattern('community.approved')
+  async handleCommunityApproved(@Payload() data: { requestedById: string; communityName: string }): Promise<void> {
+    await this.notificationService.createCommunityApprovedNotification(data.requestedById, data.communityName);
+  }
+
+  @MessagePattern('community.rejected')
+  async handleCommunityRejected(@Payload() data: { requestedById: string; communityName: string }): Promise<void> {
+    await this.notificationService.createCommunityRejectedNotification(data.requestedById, data.communityName);
+  }
 }
