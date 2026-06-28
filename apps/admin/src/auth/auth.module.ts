@@ -1,17 +1,8 @@
 import { Module } from "@nestjs/common";
-import { PassportModule } from "@nestjs/passport";
-import { JwtModule } from "@nestjs/jwt";
-import { JwtStrategy } from "./jwt.strategy";
-import { AdminGuard } from "./admin.guard";
+import { GatewayGuard } from "./gateway.guard";
 
 @Module({
-  imports: [
-    PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET ?? "secret",
-    }),
-  ],
-  providers: [JwtStrategy, AdminGuard],
-  exports: [JwtStrategy, AdminGuard],
+  providers: [GatewayGuard],
+  exports: [GatewayGuard],
 })
 export class AuthModule {}

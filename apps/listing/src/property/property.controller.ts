@@ -14,6 +14,7 @@ import {
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { PropertyService } from "./property.service";
+import { UploadService } from "../upload/upload.service";
 import { GatewayGuard } from "../auth/gateway.guard";
 import {
   UpdatePropertyDto,
@@ -24,7 +25,10 @@ import { PropertyVerificationStatus } from "../prisma/generated";
 
 @Controller("listings")
 export class PropertyController {
-  constructor(private readonly propertyService: PropertyService) {}
+  constructor(
+    private readonly propertyService: PropertyService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   @Post()
   @UseGuards(GatewayGuard)
@@ -64,7 +68,11 @@ export class PropertyController {
     return this.propertyService.findMyListings(req.user.id);
   }
 
-  @Get(":id")
+  @Get("admin/pending")
+  findPending() {
+    return this.propertyService.findPending();
+  }
+    @Get(":id")
   findById(@Param("id") id: string) {
     return this.propertyService.findById(id);
   }
@@ -102,4 +110,13 @@ export class PropertyController {
       body.ownerEmail,
     );
   }
+  @Get(":id/proof-url")
+  @UseGuards(GatewayGuard)
+  async getProofUrl(@Param("id") id: string) {
+    const property = await this.propertyService.findById(id);
+    if (!property?.ownershipProof) return { url: null };
+    const url = await this.uploadService.getSignedProofUrl(property.ownershipProof);
+    return { url };
+  }
+
 }

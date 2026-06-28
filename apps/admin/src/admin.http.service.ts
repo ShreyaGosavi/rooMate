@@ -10,20 +10,32 @@ export class AdminHttpService {
     url: string,
     token: string,
     params?: Record<string, unknown>,
+    userHeaders?: Record<string, string>,
   ): Promise<T> {
     const response = await firstValueFrom(
       this.httpService.get<T>(url, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...userHeaders,
+        },
         params,
       }),
     );
     return response.data;
   }
 
-  async patch<T>(url: string, token: string, data?: unknown): Promise<T> {
+  async patch<T>(
+    url: string,
+    token: string,
+    data?: unknown,
+    userHeaders?: Record<string, string>,
+  ): Promise<T> {
     const response = await firstValueFrom(
       this.httpService.patch<T>(url, data, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          ...userHeaders,
+        },
       }),
     );
     return response.data;

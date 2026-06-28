@@ -7,20 +7,26 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 import { AdminGuard } from "../auth/admin.guard";
 import { AdminHttpService } from "../admin.http.service";
 
-function extractToken(req: {
-  headers: Record<string, string | string[] | undefined>;
-}): string {
+function extractToken(req: any): string {
   const auth = req.headers["authorization"];
   if (typeof auth === "string") return auth.replace("Bearer ", "");
   return "";
 }
 
+function extractUserHeaders(req: any): Record<string, string> {
+  return {
+    "x-user-id": req.user?.id ?? "",
+    "x-user-email": req.user?.email ?? "",
+    "x-user-is-admin": "true",
+  };
+}
+
 @Controller("admin/properties")
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(GatewayGuard, AdminGuard)
 export class PropertyController {
   private readonly listingUrl =
     process.env.LISTING_SERVICE_URL ?? "http://localhost:3003";
@@ -29,14 +35,22 @@ export class PropertyController {
 
   @Get()
   getAllProperties(@Request() req: any) {
-    return this.http.get(`${this.listingUrl}/api/listings`, extractToken(req));
+    return this.http.get(
+      `${this.listingUrl}/api/listings`,
+      extractToken(req),
+      undefined,
+      extractUserHeaders(req),
+    );
   }
 
   @Get("pending")
   getPendingProperties(@Request() req: any) {
-    return this.http.get(`${this.listingUrl}/api/listings`, extractToken(req), {
-      verificationStatus: "PENDING",
-    });
+    return this.http.get(
+      `${this.listingUrl}/api/listings/admin/pending`,
+      extractToken(req),
+      undefined,
+      extractUserHeaders(req),
+    );
   }
 
   @Patch(":id/verify")
@@ -49,6 +63,7 @@ export class PropertyController {
       `${this.listingUrl}/api/listings/${id}/verify`,
       extractToken(req),
       body,
+      extractUserHeaders(req),
     );
   }
 }

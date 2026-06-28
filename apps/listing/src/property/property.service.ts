@@ -333,4 +333,12 @@ export class PropertyService {
 
     return property;
   }
+  async findPending() {
+    const results = await this.prisma.property.findMany({
+      where: { verificationStatus: PropertyVerificationStatus.PENDING },
+      include: { PropertyStats: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return { results, total: results.length, page: 1, limit: 100 };
+  }
 }
