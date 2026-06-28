@@ -54,7 +54,7 @@ export default function NotificationsPage() {
   const fetchNotifications = async () => {
     try {
       const res = await api.get('/api/notifications?limit=50');
-      const notifs = res.data.notifications || res.data || [];
+      const notifs = Array.isArray(res.data.data) ? res.data.data : res.data.notifications || res.data || [];
       setNotifications(notifs);
       setUnreadCount(notifs.filter((n: any) => !n.read).length);
     } catch {} finally { setLoading(false); }

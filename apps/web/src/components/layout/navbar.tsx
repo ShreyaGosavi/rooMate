@@ -1,22 +1,38 @@
 'use client';
-
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { isLoggedIn, clearTokens } from '@/lib/auth';
-import { useRouter } from 'next/navigation';
+import { getUnreadCount } from '@/lib/notifications';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [unread, setUnread] = useState(0);
   const router = useRouter();
+  const pathname = usePathname();
+
+  const fetchUnread = useCallback(async () => {
+    const count = await getUnreadCount();
+    setUnread(count);
+  }, []);
 
   useEffect(() => {
-    setLoggedIn(isLoggedIn());
-  }, []);
+    const logged = isLoggedIn();
+    setLoggedIn(logged);
+    if (logged) fetchUnread();
+  }, [pathname, fetchUnread]);
+
+  useEffect(() => {
+    if (!loggedIn) return;
+    const interval = setInterval(fetchUnread, 30000);
+    return () => clearInterval(interval);
+  }, [loggedIn, fetchUnread]);
 
   const handleLogout = () => {
     clearTokens();
     setLoggedIn(false);
+    setUnread(0);
     router.push('/');
   };
 
@@ -26,7 +42,6 @@ export default function Navbar() {
         <Link href="/">
           <Image src="/logo.svg" alt="RooMate" width={140} height={36} priority />
         </Link>
-
         {!loggedIn ? (
           <div className="flex items-center gap-8">
             <Link href="/#who-for" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Who For</Link>
@@ -45,7 +60,14 @@ export default function Navbar() {
             <Link href="/listings" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Properties</Link>
             <Link href="/communities" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Community</Link>
             <Link href="/conversations" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Messages</Link>
-            <Link href="/notifications" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Notifications</Link>
+            <Link href="/notifications" className="relative text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">
+              Notifications
+              {unread > 0 && (
+                <span className="absolute -top-2 -right-4 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white leading-none">
+                  {unread > 99 ? '99+' : unread}
+                </span>
+              )}
+            </Link>
             <button
               onClick={handleLogout}
               className="border border-[#061b32] px-5 py-2 text-sm font-medium text-[#061b32] hover:bg-[#061b32] hover:text-white transition-colors"
