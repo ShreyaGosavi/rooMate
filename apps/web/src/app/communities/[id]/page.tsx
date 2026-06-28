@@ -15,7 +15,6 @@ const NOTICE_TYPE_CONFIG: Record<string, { label: string; bg: string; color: str
 };
 
 const TABS = ['All Posts', 'Roommates', 'For Sale', 'Recommendations', 'General'];
-
 const TAB_TO_TYPE: Record<string, string | null> = {
   'All Posts': null,
   'Roommates': 'ROOMMATE_NEEDED',
@@ -37,11 +36,13 @@ export default function CommunityDetailPage() {
   const [myId, setMyId] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [myName, setMyName] = useState('');
+  const [myListings, setMyListings] = useState<any[]>([]);
 
-  // Create post form
   const [postType, setPostType] = useState('GENERAL');
   const [postTitle, setPostTitle] = useState('');
   const [postDesc, setPostDesc] = useState('');
+  const [postListingId, setPostListingId] = useState('');
+  const [postLocationLink, setPostLocationLink] = useState('');
   const [posting, setPosting] = useState(false);
 
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function CommunityDetailPage() {
           setMyId(payload.sub);
         }
       } catch {}
+      api.get('/api/listings/my').then(r => setMyListings(r.data || [])).catch(() => {});
     }
     fetchCommunity();
     fetchNotices(null);
@@ -66,17 +68,13 @@ export default function CommunityDetailPage() {
       const all = res.data.communities || res.data || [];
       const found = all.find((c: any) => c.id === params.id);
       if (found) setCommunity(found);
-
       if (isLoggedIn()) {
         try {
           const myRes = await api.get('/api/communities/my');
           const myData = Array.isArray(myRes.data) ? myRes.data : (myRes.data?.communities || []);
           const myIds = myData.map((c: any) => c.communityId || c.community?.id || c.id);
-          console.log('My community IDs:', myIds, 'Current:', params.id);
           setIsMember(myIds.includes(params.id as string));
-        } catch (e) {
-          console.error('Failed to fetch my communities:', e);
-        }
+        } catch {}
       }
     } catch {}
   };
@@ -118,12 +116,16 @@ export default function CommunityDetailPage() {
     if (!postTitle || !postDesc) return;
     setPosting(true);
     try {
+      const metadata: any = { postedByName: myName };
+      if (postType === 'ROOMMATE_NEEDED' && postListingId) metadata.listingId = postListingId;
+      if (postType === 'MESS_RECOMMENDATION' && postLocationLink) metadata.locationLink = postLocationLink;
+
       const res = await api.post(`/api/communities/${params.id}/notices`, {
-        type: postType, title: postTitle, description: postDesc,
-        metadata: { postedByName: myName },
+        type: postType, title: postTitle, description: postDesc, metadata,
       });
       setNotices(prev => [res.data, ...prev]);
       setPostTitle(''); setPostDesc(''); setPostType('GENERAL');
+      setPostListingId(''); setPostLocationLink('');
       setShowCreate(false);
     } catch {} finally { setPosting(false); }
   };
@@ -150,7 +152,6 @@ export default function CommunityDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
         <div className="flex h-16 items-center justify-between px-8">
           <Link href="/"><Image src="/logo.svg" alt="RooMate" width={110} height={28} priority /></Link>
@@ -162,7 +163,6 @@ export default function CommunityDetailPage() {
       </nav>
 
       <div className="px-8 py-8 max-w-4xl">
-        {/* Community header */}
         <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 mb-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
@@ -201,7 +201,6 @@ export default function CommunityDetailPage() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex items-center gap-1 mb-5 border-b border-[#e2e8f0] overflow-x-auto">
           {TABS.map(tab => (
             <button key={tab} onClick={() => handleTabChange(tab)} className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-all -mb-px ${activeTab === tab ? 'border-[#9fdbda] text-[#061b32]' : 'border-transparent text-[#061b32]/40 hover:text-[#061b32]'}`}>
@@ -210,7 +209,6 @@ export default function CommunityDetailPage() {
           ))}
         </div>
 
-        {/* Posts */}
         {loading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
@@ -239,6 +237,7 @@ export default function CommunityDetailPage() {
             {notices.map(n => {
               const config = NOTICE_TYPE_CONFIG[n.type] || { label: 'General', bg: 'bg-[#f0f7f7]', color: 'text-[#061b32]/60' };
               const isOwner = n.postedById === myId;
+              const meta = n.metadata as any;
               return (
                 <div key={n.id} className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
                   <div className="flex items-start gap-3">
@@ -261,8 +260,25 @@ export default function CommunityDetailPage() {
                         </div>
                       </div>
                       <p className="mt-1.5 text-sm text-[#061b32]/60 leading-relaxed">{n.description}</p>
+
+                      {/* Listing link for ROOMMATE_NEEDED */}
+                      {n.type === 'ROOMMATE_NEEDED' && meta?.listingId && (
+                        <Link href={`/listings/${meta.listingId}`} className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                          View Listed Property →
+                        </Link>
+                      )}
+
+                      {/* Location link for MESS_RECOMMENDATION */}
+                      {n.type === 'MESS_RECOMMENDATION' && meta?.locationLink && (
+                        <a href={meta.locationLink} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-600 hover:bg-purple-100 transition-colors">
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                          View on Maps →
+                        </a>
+                      )}
+
                       <div className="mt-3 flex items-center justify-between">
-                        <p className="text-xs text-[#061b32]/30">{(n.metadata as any)?.postedByName || 'Community Member'}</p>
+                        <p className="text-xs text-[#061b32]/30">{meta?.postedByName || 'Community Member'}</p>
                         {n.postedById !== myId && (
                           <button
                             onClick={async () => {
@@ -271,7 +287,6 @@ export default function CommunityDetailPage() {
                                 const res = await api.post('/api/conversations', { otherUserId: n.postedById });
                                 window.location.href = `/conversations?id=${res.data._id}`;
                               } catch (e: any) {
-                                console.error('Conversation error:', e?.response?.data || e.message);
                                 alert(e?.response?.data?.message || 'Failed to open conversation');
                               }
                             }}
@@ -291,7 +306,6 @@ export default function CommunityDetailPage() {
         )}
       </div>
 
-      {/* Create post modal */}
       {showCreate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
@@ -307,20 +321,59 @@ export default function CommunityDetailPage() {
                 <label className="mb-2 block text-sm font-medium text-[#061b32]">Post Type</label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(NOTICE_TYPE_CONFIG).map(([key, val]) => (
-                    <button key={key} onClick={() => setPostType(key)} className={`rounded-xl border py-2 text-xs font-medium transition-all ${postType === key ? 'bg-[#061b32] text-white border-[#061b32]' : 'bg-white text-[#061b32] border-[#e2e8f0] hover:border-[#9fdbda]'}`}>
+                    <button key={key} onClick={() => { setPostType(key); setPostListingId(''); setPostLocationLink(''); }}
+                      className={`rounded-xl border py-2 text-xs font-medium transition-all ${postType === key ? 'bg-[#061b32] text-white border-[#061b32]' : 'bg-white text-[#061b32] border-[#e2e8f0] hover:border-[#9fdbda]'}`}>
                       {val.label}
                     </button>
                   ))}
                 </div>
               </div>
+
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[#061b32]">Title</label>
                 <input value={postTitle} onChange={e => setPostTitle(e.target.value)} placeholder="e.g. Roommate needed near PCCOE" className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none" />
               </div>
+
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[#061b32]">Description</label>
-                <textarea value={postDesc} onChange={e => setPostDesc(e.target.value)} placeholder="Add more details..." rows={4} className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none resize-none" />
+                <textarea value={postDesc} onChange={e => setPostDesc(e.target.value)} placeholder="Add more details..." rows={3} className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none resize-none" />
               </div>
+
+              {/* Listing picker for ROOMMATE_NEEDED */}
+              {postType === 'ROOMMATE_NEEDED' && (
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
+                    Link your listing <span className="text-[#061b32]/40 font-normal">(optional)</span>
+                  </label>
+                  {myListings.length > 0 ? (
+                    <select value={postListingId} onChange={e => setPostListingId(e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none bg-white">
+                      <option value="">No listing selected</option>
+                      {myListings.map((l: any) => (
+                        <option key={l.id} value={l.id}>{l.title} — ₹{l.rent?.toLocaleString()}/mo</option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="flex items-center gap-2 rounded-xl border border-[#e2e8f0] px-4 py-2.5">
+                      <p className="text-sm text-[#061b32]/40">No listings yet —</p>
+                      <Link href="/listings/create" className="text-sm text-[#9fdbda] hover:opacity-80">List a property</Link>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Location link for MESS_RECOMMENDATION */}
+              {postType === 'MESS_RECOMMENDATION' && (
+                <div>
+                  <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
+                    Google Maps link <span className="text-[#061b32]/40 font-normal">(optional)</span>
+                  </label>
+                  <input value={postLocationLink} onChange={e => setPostLocationLink(e.target.value)}
+                    placeholder="https://maps.google.com/..."
+                    className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none" />
+                </div>
+              )}
+
               <button onClick={createPost} disabled={posting || !postTitle || !postDesc} className="w-full rounded-xl bg-[#9fdbda] py-3 text-sm font-semibold text-[#061b32] hover:opacity-90 disabled:opacity-50 transition-opacity">
                 {posting ? 'Posting...' : 'Post'}
               </button>
