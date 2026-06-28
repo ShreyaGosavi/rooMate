@@ -26,6 +26,11 @@ export class ConversationController {
     return this.conversationService.getMyConversations(req.user.id);
   }
 
+  @Get("unread-count")
+  getUnreadCount(@Request() req: any) {
+    return this.conversationService.getUnreadCount(req.user.id);
+  }
+
   @Delete(":id")
   deleteConversation(@Param("id") id: string, @Request() req: any) {
     return this.conversationService.deleteConversation(id, req.user.id);

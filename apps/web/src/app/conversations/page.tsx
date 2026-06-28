@@ -18,21 +18,25 @@ export default function ConversationsPage() {
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [myUserId, setMyUserId] = useState('');
+  const [openedConvs, setOpenedConvs] = useState<Set<string>>(new Set());
+  const myUserIdRef = useRef('');
   const [usernames, setUsernames] = useState<Record<string, string>>({});
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    fetchConversations(searchParams.get('id') || undefined);
     const token = localStorage.getItem('accessToken');
     if (!token) return;
 
-    // Decode JWT to get userId
+    let userId = '';
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      setMyUserId(payload.sub);
+      userId = payload.sub;
+      setMyUserId(userId);
+      myUserIdRef.current = userId;
     } catch {}
 
-    // Connect WebSocket
+    fetchConversations(userId, searchParams.get('id') || undefined);
+
     const socket = io('http://localhost:3006/chat', {
       auth: { token },
       transports: ['websocket'],
@@ -40,8 +44,11 @@ export default function ConversationsPage() {
     socketRef.current = socket;
 
     socket.on('message', (msg: any) => {
-      setMessages(prev => [...prev, msg]);
-      // Update last message in conversations list
+      setMessages(prev => {
+      const exists = prev.some((m: any) => m._id === msg._id);
+      if (exists) return prev;
+      return [...prev, msg];
+    });
       setConversations(prev => prev.map(c =>
         c._id === msg.conversationId
           ? { ...c, lastMessage: msg.text, updatedAt: msg.createdAt }
@@ -56,20 +63,16 @@ export default function ConversationsPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const fetchConversations = async (autoOpenId?: string) => {
+  const fetchConversations = async (myId: string, autoOpenId?: string) => {
     try {
-      console.log('Fetching conversations...');
       const res = await api.get('/api/conversations');
-      console.log('Conversations response:', res.data);
       const convs = res.data || [];
       setConversations(convs);
 
-      // Resolve usernames
-      const token = localStorage.getItem('accessToken');
-      const myId = token ? JSON.parse(atob(token.split('.')[1] + '==')).sub : '';
       const otherIds = [...new Set(convs.map((c: any) =>
         c.participant1Id === myId ? c.participant2Id : c.participant1Id
       ))] as string[];
+
       const resolved: Record<string, string> = {};
       await Promise.all(otherIds.map(async (id: string) => {
         try {
@@ -77,7 +80,6 @@ export default function ConversationsPage() {
           resolved[id] = r.data?.username || id.slice(0, 8);
         } catch { resolved[id] = id.slice(0, 8); }
       }));
-      console.log('Resolved:', resolved);
       setUsernames(resolved);
 
       if (autoOpenId) {
@@ -91,16 +93,14 @@ export default function ConversationsPage() {
 
   const openConversation = async (conv: any) => {
     setActiveConv(conv);
+    setOpenedConvs(prev => new Set([...prev, conv._id]));
     setMsgLoading(true);
     setMessages([]);
-
-    // Join room
     socketRef.current?.emit('join', { conversationId: conv._id });
-
     try {
       const res = await api.get(`/api/conversations/${conv._id}/messages`);
-      setMessages((res.data.messages || []).reverse());
-      // Mark as read
+      const fetched = (res.data.messages || []).reverse();
+      setMessages(fetched);
       await api.patch(`/api/conversations/${conv._id}/messages/read`);
     } catch {} finally {
       setMsgLoading(false);
@@ -132,7 +132,8 @@ export default function ConversationsPage() {
   };
 
   const getOtherParticipant = (conv: any) => {
-    const otherId = conv.participant1Id === myUserId ? conv.participant2Id : conv.participant1Id;
+    const myId = myUserIdRef.current || myUserId;
+    const otherId = conv.participant1Id === myId ? conv.participant2Id : conv.participant1Id;
     return { userId: otherId, username: usernames[otherId] || otherId?.slice(0, 8) };
   };
 
@@ -141,9 +142,9 @@ export default function ConversationsPage() {
     return other?.username?.toLowerCase().includes(search.toLowerCase()) || !search;
   });
 
-  // Group messages by date
+  const sortedMessages = [...messages].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   const groupedMessages: { date: string; msgs: any[] }[] = [];
-  messages.forEach(msg => {
+  sortedMessages.forEach(msg => {
     const date = formatDate(msg.createdAt);
     const last = groupedMessages[groupedMessages.length - 1];
     if (last && last.date === date) {
@@ -155,16 +156,10 @@ export default function ConversationsPage() {
 
   return (
     <div className="flex h-screen bg-white overflow-hidden">
-      {/* Left sidebar */}
       <div className="w-80 shrink-0 border-r border-[#e2e8f0] flex flex-col">
-        {/* Header */}
         <div className="px-5 py-4 border-b border-[#e2e8f0]">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <Link href="/">
-                <Image src="/logo.svg" alt="RooMate" width={100} height={26} priority />
-              </Link>
-            </div>
+            <Link href="/"><Image src="/logo.svg" alt="RooMate" width={100} height={26} priority /></Link>
           </div>
           <h1 className="text-lg font-bold text-[#061b32]">Messages</h1>
           <p className="text-xs text-[#061b32]/40">Chat with people and stay connected.</p>
@@ -174,7 +169,6 @@ export default function ConversationsPage() {
           </div>
         </div>
 
-        {/* Conversation list */}
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="p-4 space-y-3">
@@ -211,8 +205,8 @@ export default function ConversationsPage() {
                     </div>
                     <p className="text-xs text-[#061b32]/50 truncate mt-0.5">{conv.lastMessage || 'Start a conversation'}</p>
                   </div>
-                  {conv.unreadCount > 0 && (
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#9fdbda] text-xs font-bold text-[#061b32]">{conv.unreadCount}</span>
+                  {!openedConvs.has(conv._id) && conv._id !== activeConv?._id && (
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#9fdbda]"></span>
                   )}
                 </button>
               );
@@ -221,10 +215,8 @@ export default function ConversationsPage() {
         </div>
       </div>
 
-      {/* Right - chat window */}
       {activeConv ? (
         <div className="flex-1 flex flex-col min-w-0">
-          {/* Chat header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-[#e2e8f0]">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#9fdbda]/20 text-sm font-bold text-[#061b32]">
@@ -240,15 +232,14 @@ export default function ConversationsPage() {
             </button>
           </div>
 
-          {/* Messages */}
           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
             {msgLoading ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-sm text-[#061b32]/40">Loading messages...</div>
               </div>
             ) : (
-              groupedMessages.map(group => (
-                <div key={group.date}>
+              groupedMessages.map((group, gi) => (
+                <div key={`${group.date}-${gi}`}>
                   <div className="flex items-center justify-center mb-4">
                     <span className="rounded-full bg-[#f0f7f7] px-3 py-1 text-xs text-[#061b32]/40">{group.date}</span>
                   </div>
@@ -278,7 +269,6 @@ export default function ConversationsPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input */}
           <div className="px-6 py-4 border-t border-[#e2e8f0]">
             <div className="flex items-center gap-3 rounded-2xl border border-[#e2e8f0] bg-[#f8fafa] px-4 py-3">
               <input

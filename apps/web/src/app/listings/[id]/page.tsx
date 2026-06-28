@@ -18,6 +18,8 @@ const AMENITY_LABELS: Record<string, string> = {
   ATTACHED_BATHROOM: 'Attached Bathroom', SECURITY: 'Security', CCTV: 'CCTV', LIFT: 'Lift', PURIFIER: 'Water Purifier',
 };
 
+const MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '';
+
 export default function PropertyDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -85,11 +87,10 @@ export default function PropertyDetailPage() {
 
   const rules = property.rules?.rules || [];
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${property.latitude},${property.longitude}`;
-  const mapEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&q=${property.latitude},${property.longitude}&zoom=15`;
+  const mapEmbedUrl = `https://www.google.com/maps/embed/v1/place?key=${MAPS_KEY}&q=${property.latitude},${property.longitude}&zoom=15`;
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar */}
       <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link href="/"><Image src="/logo.svg" alt="RooMate" width={120} height={32} priority /></Link>
@@ -102,17 +103,12 @@ export default function PropertyDetailPage() {
 
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="flex gap-8 flex-col lg:flex-row">
-
-          {/* Left - main content */}
           <div className="flex-1 min-w-0">
-
-            {/* Photo gallery */}
             <div className="rounded-2xl overflow-hidden border border-[#e2e8f0]">
               {property.images?.length > 0 ? (
                 <>
                   <div className="relative h-80 bg-[#f0f7f7]">
                     <img src={property.images[activePhoto]} alt={property.title} className="h-full w-full object-cover" />
-                    {/* Verification badge */}
                     <div className={`absolute top-4 left-4 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ${property.verificationStatus === 'VERIFIED' ? 'bg-[#9fdbda] text-[#061b32]' : 'bg-yellow-100 text-yellow-700'}`}>
                       {property.verificationStatus === 'VERIFIED' ? (
                         <><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg> Verified</>
@@ -138,7 +134,6 @@ export default function PropertyDetailPage() {
               )}
             </div>
 
-            {/* Title & location */}
             <div className="mt-6">
               <h1 className="text-2xl font-bold text-[#061b32]">{property.title}</h1>
               <p className="mt-1 flex items-center gap-1.5 text-sm text-[#061b32]/50">
@@ -154,7 +149,6 @@ export default function PropertyDetailPage() {
               )}
             </div>
 
-            {/* Key details */}
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
                 { label: 'BHK', value: BHK_LABELS[property.bhk] || property.bhk },
@@ -169,7 +163,6 @@ export default function PropertyDetailPage() {
               ))}
             </div>
 
-            {/* Amenities */}
             {property.amenities?.length > 0 && (
               <div className="mt-8">
                 <h2 className="text-lg font-bold text-[#061b32] mb-4">Amenities</h2>
@@ -184,7 +177,6 @@ export default function PropertyDetailPage() {
               </div>
             )}
 
-            {/* House rules */}
             {rules.length > 0 && (
               <div className="mt-8">
                 <h2 className="text-lg font-bold text-[#061b32] mb-4">House Rules</h2>
@@ -199,7 +191,6 @@ export default function PropertyDetailPage() {
               </div>
             )}
 
-            {/* Map */}
             <div className="mt-8">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-[#061b32]">Location</h2>
@@ -209,19 +200,11 @@ export default function PropertyDetailPage() {
                 </a>
               </div>
               <div className="rounded-2xl overflow-hidden border border-[#e2e8f0] h-64">
-                <iframe
-                  src={mapEmbedUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                />
+                <iframe src={mapEmbedUrl} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" />
               </div>
               <p className="mt-2 text-xs text-[#061b32]/40">{property.formattedAddress}</p>
             </div>
 
-            {/* Similar properties */}
             {similar.length > 0 && (
               <div className="mt-10">
                 <h2 className="text-lg font-bold text-[#061b32] mb-4">Similar Properties</h2>
@@ -243,10 +226,8 @@ export default function PropertyDetailPage() {
             )}
           </div>
 
-          {/* Right - sticky contact card */}
           <div className="lg:w-80 shrink-0">
             <div className="sticky top-24 space-y-4">
-              {/* Price card */}
               <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 shadow-sm">
                 <div className="flex items-end gap-2">
                   <p className="text-3xl font-bold text-[#061b32]">₹{property.rent?.toLocaleString()}</p>
@@ -276,7 +257,6 @@ export default function PropertyDetailPage() {
                     </div>
                   )}
                 </div>
-
                 <div className="mt-5 space-y-3">
                   <a href={`tel:${property.ownerPhone}`} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#9fdbda] py-3 text-sm font-semibold text-[#061b32] hover:opacity-90 transition-opacity">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6.06 6.06l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -291,8 +271,6 @@ export default function PropertyDetailPage() {
                   {convError && <p className="text-xs text-red-500 text-center">{convError}</p>}
                 </div>
               </div>
-
-              {/* Safety card */}
               <div className="rounded-2xl border border-[#e2e8f0] bg-[#f8fafa] p-4">
                 <div className="flex items-start gap-3">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9fdbda" strokeWidth="2" className="shrink-0 mt-0.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>

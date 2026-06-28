@@ -72,20 +72,6 @@ export default function Home() {
                 <p className="mt-5 text-lg font-light text-[#061b32]/70">
                   Browse verified listings, join communities, and find your perfect place — all in one spot.
                 </p>
-                <div className="mt-8 flex flex-wrap gap-3">
-                  <Link href="/listings" className="flex items-center gap-2 rounded-xl bg-[#061b32] px-6 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Browse Listings
-                  </Link>
-                  <Link href="/listings/create" className="flex items-center gap-2 rounded-xl bg-[#9fdbda] px-6 py-3 text-sm font-semibold text-[#061b32] hover:opacity-90 transition-opacity">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    List Property
-                  </Link>
-                  <Link href="/communities" className="flex items-center gap-2 rounded-xl border border-[#061b32]/20 px-6 py-3 text-sm font-semibold text-[#061b32] hover:border-[#9fdbda] hover:text-[#061b32] transition-colors">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    Communities
-                  </Link>
-                </div>
               </>
             ) : (
               <>

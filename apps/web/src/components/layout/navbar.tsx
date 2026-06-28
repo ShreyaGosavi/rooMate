@@ -3,36 +3,42 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useCallback } from 'react';
 import { isLoggedIn, clearTokens } from '@/lib/auth';
-import { getUnreadCount } from '@/lib/notifications';
+import { getUnreadCount, getUnreadMessagesCount } from '@/lib/notifications';
 import { useRouter, usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [unread, setUnread] = useState(0);
+  const [unreadMessages, setUnreadMessages] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
 
-  const fetchUnread = useCallback(async () => {
-    const count = await getUnreadCount();
-    setUnread(count);
+  const fetchCounts = useCallback(async () => {
+    const [notifCount, msgCount] = await Promise.all([
+      getUnreadCount(),
+      getUnreadMessagesCount(),
+    ]);
+    setUnread(notifCount);
+    setUnreadMessages(msgCount);
   }, []);
 
   useEffect(() => {
     const logged = isLoggedIn();
     setLoggedIn(logged);
-    if (logged) fetchUnread();
-  }, [pathname, fetchUnread]);
+    if (logged) fetchCounts();
+  }, [pathname, fetchCounts]);
 
   useEffect(() => {
     if (!loggedIn) return;
-    const interval = setInterval(fetchUnread, 30000);
+    const interval = setInterval(fetchCounts, 30000);
     return () => clearInterval(interval);
-  }, [loggedIn, fetchUnread]);
+  }, [loggedIn, fetchCounts]);
 
   const handleLogout = () => {
     clearTokens();
     setLoggedIn(false);
     setUnread(0);
+    setUnreadMessages(0);
     router.push('/');
   };
 
@@ -59,7 +65,14 @@ export default function Navbar() {
           <div className="flex items-center gap-8">
             <Link href="/listings" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Properties</Link>
             <Link href="/communities" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Community</Link>
-            <Link href="/conversations" className="text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">Messages</Link>
+            <Link href="/conversations" className="relative text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">
+              Messages
+              {unreadMessages > 0 && (
+                <span className="absolute -top-2 -right-4 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white leading-none">
+                  {unreadMessages > 99 ? '99+' : unreadMessages}
+                </span>
+              )}
+            </Link>
             <Link href="/notifications" className="relative text-sm font-medium text-[#061b32] hover:text-[#9fdbda] transition-colors">
               Notifications
               {unread > 0 && (

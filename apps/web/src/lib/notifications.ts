@@ -9,3 +9,12 @@ export async function getUnreadCount(): Promise<number> {
     return 0;
   }
 }
+
+export async function getUnreadMessagesCount(): Promise<number> {
+  try {
+    const res = await api.get('/api/conversations/unread-count');
+    return typeof res.data === 'number' ? res.data : 0;
+  } catch {
+    return 0;
+  }
+}
