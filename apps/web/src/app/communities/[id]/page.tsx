@@ -1,26 +1,47 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
-import api from '@/lib/api';
-import { isLoggedIn } from '@/lib/auth';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import api from "@/lib/api";
+import { isLoggedIn } from "@/lib/auth";
 
-const NOTICE_TYPE_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  ROOMMATE_NEEDED: { label: 'Roommates', bg: 'bg-blue-50', color: 'text-blue-500' },
-  SPARE_ITEM_GIVEAWAY: { label: 'For Sale', bg: 'bg-orange-50', color: 'text-orange-500' },
-  MESS_RECOMMENDATION: { label: 'Recommendations', bg: 'bg-purple-50', color: 'text-purple-500' },
-  GENERAL: { label: 'General', bg: 'bg-[#f0f7f7]', color: 'text-[#061b32]/60' },
+const NOTICE_TYPE_CONFIG: Record<
+  string,
+  { label: string; bg: string; color: string }
+> = {
+  ROOMMATE_NEEDED: {
+    label: "Roommates",
+    bg: "bg-blue-50",
+    color: "text-blue-500",
+  },
+  SPARE_ITEM_GIVEAWAY: {
+    label: "For Sale",
+    bg: "bg-orange-50",
+    color: "text-orange-500",
+  },
+  MESS_RECOMMENDATION: {
+    label: "Recommendations",
+    bg: "bg-purple-50",
+    color: "text-purple-500",
+  },
+  GENERAL: { label: "General", bg: "bg-[#f0f7f7]", color: "text-[#061b32]/60" },
 };
 
-const TABS = ['All Posts', 'Roommates', 'For Sale', 'Recommendations', 'General'];
+const TABS = [
+  "All Posts",
+  "Roommates",
+  "For Sale",
+  "Recommendations",
+  "General",
+];
 const TAB_TO_TYPE: Record<string, string | null> = {
-  'All Posts': null,
-  'Roommates': 'ROOMMATE_NEEDED',
-  'For Sale': 'SPARE_ITEM_GIVEAWAY',
-  'Recommendations': 'MESS_RECOMMENDATION',
-  'General': 'GENERAL',
+  "All Posts": null,
+  Roommates: "ROOMMATE_NEEDED",
+  "For Sale": "SPARE_ITEM_GIVEAWAY",
+  Recommendations: "MESS_RECOMMENDATION",
+  General: "GENERAL",
 };
 
 export default function CommunityDetailPage() {
@@ -29,20 +50,20 @@ export default function CommunityDetailPage() {
   const [community, setCommunity] = useState<any>(null);
   const [notices, setNotices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('All Posts');
+  const [activeTab, setActiveTab] = useState("All Posts");
   const [isMember, setIsMember] = useState(false);
   const [joining, setJoining] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
-  const [myId, setMyId] = useState('');
+  const [myId, setMyId] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
-  const [myName, setMyName] = useState('');
+  const [myName, setMyName] = useState("");
   const [myListings, setMyListings] = useState<any[]>([]);
 
-  const [postType, setPostType] = useState('GENERAL');
-  const [postTitle, setPostTitle] = useState('');
-  const [postDesc, setPostDesc] = useState('');
-  const [postListingId, setPostListingId] = useState('');
-  const [postLocationLink, setPostLocationLink] = useState('');
+  const [postType, setPostType] = useState("GENERAL");
+  const [postTitle, setPostTitle] = useState("");
+  const [postDesc, setPostDesc] = useState("");
+  const [postListingId, setPostListingId] = useState("");
+  const [postLocationLink, setPostLocationLink] = useState("");
   const [posting, setPosting] = useState(false);
 
   useEffect(() => {
@@ -50,13 +71,16 @@ export default function CommunityDetailPage() {
     setLoggedIn(li);
     if (li) {
       try {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem("accessToken");
         if (token) {
-          const payload = JSON.parse(atob(token.split('.')[1]));
+          const payload = JSON.parse(atob(token.split(".")[1]));
           setMyId(payload.sub);
         }
       } catch {}
-      api.get('/api/listings/my').then(r => setMyListings(r.data || [])).catch(() => {});
+      api
+        .get("/api/listings/my")
+        .then((r) => setMyListings(r.data || []))
+        .catch(() => {});
     }
     fetchCommunity();
     fetchNotices(null);
@@ -64,15 +88,19 @@ export default function CommunityDetailPage() {
 
   const fetchCommunity = async () => {
     try {
-      const res = await api.get('/api/communities?query=');
+      const res = await api.get("/api/communities?query=");
       const all = res.data.communities || res.data || [];
       const found = all.find((c: any) => c.id === params.id);
       if (found) setCommunity(found);
       if (isLoggedIn()) {
         try {
-          const myRes = await api.get('/api/communities/my');
-          const myData = Array.isArray(myRes.data) ? myRes.data : (myRes.data?.communities || []);
-          const myIds = myData.map((c: any) => c.communityId || c.community?.id || c.id);
+          const myRes = await api.get("/api/communities/my");
+          const myData = Array.isArray(myRes.data)
+            ? myRes.data
+            : myRes.data?.communities || [];
+          const myIds = myData.map(
+            (c: any) => c.communityId || c.community?.id || c.id,
+          );
           setIsMember(myIds.includes(params.id as string));
         } catch {}
       }
@@ -87,7 +115,10 @@ export default function CommunityDetailPage() {
         : `/api/communities/${params.id}/notices`;
       const res = await api.get(url);
       setNotices(res.data || []);
-    } catch {} finally { setLoading(false); }
+    } catch {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleTabChange = (tab: string) => {
@@ -96,12 +127,18 @@ export default function CommunityDetailPage() {
   };
 
   const joinCommunity = async () => {
-    if (!loggedIn) { router.push('/login'); return; }
+    if (!loggedIn) {
+      router.push("/login");
+      return;
+    }
     setJoining(true);
     try {
       await api.post(`/api/communities/${params.id}/join`);
       setIsMember(true);
-    } catch {} finally { setJoining(false); }
+    } catch {
+    } finally {
+      setJoining(false);
+    }
   };
 
   const leaveCommunity = async () => {
@@ -109,7 +146,10 @@ export default function CommunityDetailPage() {
     try {
       await api.delete(`/api/communities/${params.id}/leave`);
       setIsMember(false);
-    } catch {} finally { setJoining(false); }
+    } catch {
+    } finally {
+      setJoining(false);
+    }
   };
 
   const createPost = async () => {
@@ -117,23 +157,34 @@ export default function CommunityDetailPage() {
     setPosting(true);
     try {
       const metadata: any = { postedByName: myName };
-      if (postType === 'ROOMMATE_NEEDED' && postListingId) metadata.listingId = postListingId;
-      if (postType === 'MESS_RECOMMENDATION' && postLocationLink) metadata.locationLink = postLocationLink;
+      if (postType === "ROOMMATE_NEEDED" && postListingId)
+        metadata.listingId = postListingId;
+      if (postType === "MESS_RECOMMENDATION" && postLocationLink)
+        metadata.locationLink = postLocationLink;
 
       const res = await api.post(`/api/communities/${params.id}/notices`, {
-        type: postType, title: postTitle, description: postDesc, metadata,
+        type: postType,
+        title: postTitle,
+        description: postDesc,
+        metadata,
       });
-      setNotices(prev => [res.data, ...prev]);
-      setPostTitle(''); setPostDesc(''); setPostType('GENERAL');
-      setPostListingId(''); setPostLocationLink('');
+      setNotices((prev) => [res.data, ...prev]);
+      setPostTitle("");
+      setPostDesc("");
+      setPostType("GENERAL");
+      setPostListingId("");
+      setPostLocationLink("");
       setShowCreate(false);
-    } catch {} finally { setPosting(false); }
+    } catch {
+    } finally {
+      setPosting(false);
+    }
   };
 
   const deletePost = async (noticeId: string) => {
     try {
       await api.delete(`/api/communities/${params.id}/notices/${noticeId}`);
-      setNotices(prev => prev.filter(n => n.id !== noticeId));
+      setNotices((prev) => prev.filter((n) => n.id !== noticeId));
     } catch {}
   };
 
@@ -143,10 +194,10 @@ export default function CommunityDetailPage() {
     const mins = Math.floor(diff / 60000);
     const hrs = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
-    if (mins < 1) return 'Just now';
+    if (mins < 1) return "Just now";
     if (mins < 60) return `${mins} min ago`;
-    if (hrs < 24) return `${hrs} hour${hrs > 1 ? 's' : ''} ago`;
-    if (days === 1) return 'Yesterday';
+    if (hrs < 24) return `${hrs} hour${hrs > 1 ? "s" : ""} ago`;
+    if (days === 1) return "Yesterday";
     return `${days} days ago`;
   };
 
@@ -154,10 +205,28 @@ export default function CommunityDetailPage() {
     <div className="min-h-screen bg-[#f8fafa]">
       <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
         <div className="flex h-16 items-center justify-between px-8">
-          <Link href="/"><Image src="/logo.svg" alt="RooMate" width={110} height={28} priority /></Link>
+          <Link href="/">
+            <Image
+              src="/logo.svg"
+              alt="RooMate"
+              width={110}
+              height={28}
+              priority
+            />
+          </Link>
           <div className="flex items-center gap-4">
-            <Link href="/communities" className="text-sm text-[#061b32]/50 hover:text-[#061b32]">← Communities</Link>
-            <Link href="/profile" className="text-sm text-[#061b32]/50 hover:text-[#061b32]">Profile</Link>
+            <Link
+              href="/communities"
+              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
+            >
+              ← Communities
+            </Link>
+            <Link
+              href="/profile"
+              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
+            >
+              Profile
+            </Link>
           </div>
         </div>
       </nav>
@@ -167,34 +236,70 @@ export default function CommunityDetailPage() {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-4">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#9fdbda]/20 text-xl font-bold text-[#061b32]">
-                {community?.name?.slice(0, 2).toUpperCase() || '..'}
+                {community?.name?.slice(0, 2).toUpperCase() || ".."}
               </div>
               <div>
-                <h1 className="text-xl font-bold text-[#061b32]">{community?.name || 'Community'}</h1>
-                <p className="text-sm text-[#061b32]/50 mt-0.5">Connect. Share. Help each other.</p>
+                <h1 className="text-xl font-bold text-[#061b32]">
+                  {community?.name || "Community"}
+                </h1>
+                <p className="text-sm text-[#061b32]/50 mt-0.5">
+                  Connect. Share. Help each other.
+                </p>
                 <div className="flex items-center gap-3 mt-2">
-                  <span className="rounded-full bg-[#f0f7f7] px-2.5 py-0.5 text-xs text-[#061b32]/50">{community?.type === 'COLLEGE' ? 'College' : 'Company'}</span>
-                  <span className="text-xs text-[#061b32]/40">{community?.city}</span>
+                  <span className="rounded-full bg-[#f0f7f7] px-2.5 py-0.5 text-xs text-[#061b32]/50">
+                    {community?.type === "COLLEGE" ? "College" : "Company"}
+                  </span>
+                  <span className="text-xs text-[#061b32]/40">
+                    {community?.city}
+                  </span>
                   {community?.officialWebsite && (
-                    <a href={community.officialWebsite} target="_blank" rel="noopener noreferrer" className="text-xs text-[#9fdbda] hover:opacity-80">Website →</a>
+                    <a
+                      href={community.officialWebsite}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[#9fdbda] hover:opacity-80"
+                    >
+                      Website →
+                    </a>
                   )}
                 </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
               {isMember && (
-                <button onClick={() => setShowCreate(true)} className="flex items-center gap-1.5 rounded-xl bg-[#9fdbda] px-4 py-2 text-sm font-semibold text-[#061b32] hover:opacity-90 transition-opacity">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <button
+                  onClick={() => setShowCreate(true)}
+                  className="flex items-center gap-1.5 rounded-xl bg-[#9fdbda] px-4 py-2 text-sm font-semibold text-[#061b32] hover:opacity-90 transition-opacity"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                  </svg>
                   Create Post
                 </button>
               )}
               {isMember ? (
-                <button onClick={leaveCommunity} disabled={joining} className="rounded-xl border border-[#e2e8f0] px-4 py-2 text-sm font-medium text-[#061b32]/50 hover:border-red-200 hover:text-red-400 transition-all disabled:opacity-50">
-                  {joining ? 'Leaving...' : 'Leave'}
+                <button
+                  onClick={leaveCommunity}
+                  disabled={joining}
+                  className="rounded-xl border border-[#e2e8f0] px-4 py-2 text-sm font-medium text-[#061b32]/50 hover:border-red-200 hover:text-red-400 transition-all disabled:opacity-50"
+                >
+                  {joining ? "Leaving..." : "Leave"}
                 </button>
               ) : (
-                <button onClick={joinCommunity} disabled={joining} className="rounded-xl bg-[#061b32] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50">
-                  {joining ? 'Joining...' : 'Join Community'}
+                <button
+                  onClick={joinCommunity}
+                  disabled={joining}
+                  className="rounded-xl bg-[#061b32] px-4 py-2 text-sm font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                >
+                  {joining ? "Joining..." : "Join Community"}
                 </button>
               )}
             </div>
@@ -202,8 +307,12 @@ export default function CommunityDetailPage() {
         </div>
 
         <div className="flex items-center gap-1 mb-5 border-b border-[#e2e8f0] overflow-x-auto">
-          {TABS.map(tab => (
-            <button key={tab} onClick={() => handleTabChange(tab)} className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-all -mb-px ${activeTab === tab ? 'border-[#9fdbda] text-[#061b32]' : 'border-transparent text-[#061b32]/40 hover:text-[#061b32]'}`}>
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => handleTabChange(tab)}
+              className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-all -mb-px ${activeTab === tab ? "border-[#9fdbda] text-[#061b32]" : "border-transparent text-[#061b32]/40 hover:text-[#061b32]"}`}
+            >
               {tab}
             </button>
           ))}
@@ -212,7 +321,10 @@ export default function CommunityDetailPage() {
         {loading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="rounded-2xl border border-[#e2e8f0] bg-white p-5 animate-pulse">
+              <div
+                key={i}
+                className="rounded-2xl border border-[#e2e8f0] bg-white p-5 animate-pulse"
+              >
                 <div className="flex gap-3">
                   <div className="h-10 w-10 rounded-full bg-[#f0f7f7]" />
                   <div className="flex-1 space-y-2">
@@ -226,20 +338,47 @@ export default function CommunityDetailPage() {
         ) : notices.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#9fdbda]/20 mb-3">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9fdbda" strokeWidth="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#9fdbda"
+                strokeWidth="1.5"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
             </div>
             <p className="font-semibold text-[#061b32]">No posts yet</p>
-            <p className="text-sm text-[#061b32]/40 mt-1">{isMember ? 'Be the first to post!' : 'Join the community to post'}</p>
-            {isMember && <button onClick={() => setShowCreate(true)} className="mt-4 rounded-xl bg-[#061b32] px-5 py-2 text-sm font-semibold text-white hover:opacity-90">Create Post</button>}
+            <p className="text-sm text-[#061b32]/40 mt-1">
+              {isMember
+                ? "Be the first to post!"
+                : "Join the community to post"}
+            </p>
+            {isMember && (
+              <button
+                onClick={() => setShowCreate(true)}
+                className="mt-4 rounded-xl bg-[#061b32] px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
+              >
+                Create Post
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-4">
-            {notices.map(n => {
-              const config = NOTICE_TYPE_CONFIG[n.type] || { label: 'General', bg: 'bg-[#f0f7f7]', color: 'text-[#061b32]/60' };
+            {notices.map((n) => {
+              const config = NOTICE_TYPE_CONFIG[n.type] || {
+                label: "General",
+                bg: "bg-[#f0f7f7]",
+                color: "text-[#061b32]/60",
+              };
               const isOwner = n.postedById === myId;
               const meta = n.metadata as any;
               return (
-                <div key={n.id} className="rounded-2xl border border-[#e2e8f0] bg-white p-5">
+                <div
+                  key={n.id}
+                  className="rounded-2xl border border-[#e2e8f0] bg-white p-5"
+                >
                   <div className="flex items-start gap-3">
                     <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#9fdbda]/20 text-sm font-bold text-[#061b32]">
                       {n.postedById?.slice(0, 2).toUpperCase()}
@@ -247,52 +386,123 @@ export default function CommunityDetailPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <h3 className="font-semibold text-[#061b32] text-sm">{n.title}</h3>
-                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${config.bg} ${config.color}`}>{config.label}</span>
+                          <h3 className="font-semibold text-[#061b32] text-sm">
+                            {n.title}
+                          </h3>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-xs font-medium ${config.bg} ${config.color}`}
+                          >
+                            {config.label}
+                          </span>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <p className="text-xs text-[#061b32]/30">{formatTime(n.createdAt)}</p>
+                          <p className="text-xs text-[#061b32]/30">
+                            {formatTime(n.createdAt)}
+                          </p>
                           {isOwner && (
-                            <button onClick={() => deletePost(n.id)} className="text-[#061b32]/20 hover:text-red-400 transition-colors">
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                            <button
+                              onClick={() => deletePost(n.id)}
+                              className="text-[#061b32]/20 hover:text-red-400 transition-colors"
+                            >
+                              <svg
+                                width="13"
+                                height="13"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <polyline points="3 6 5 6 21 6" />
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                              </svg>
                             </button>
                           )}
                         </div>
                       </div>
-                      <p className="mt-1.5 text-sm text-[#061b32]/60 leading-relaxed">{n.description}</p>
+                      <p className="mt-1.5 text-sm text-[#061b32]/60 leading-relaxed">
+                        {n.description}
+                      </p>
 
                       {/* Listing link for ROOMMATE_NEEDED */}
-                      {n.type === 'ROOMMATE_NEEDED' && meta?.listingId && (
-                        <Link href={`/listings/${meta.listingId}`} className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                      {n.type === "ROOMMATE_NEEDED" && meta?.listingId && (
+                        <Link
+                          href={`/listings/${meta.listingId}`}
+                          className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors"
+                        >
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                          </svg>
                           View Listed Property →
                         </Link>
                       )}
 
                       {/* Location link for MESS_RECOMMENDATION */}
-                      {n.type === 'MESS_RECOMMENDATION' && meta?.locationLink && (
-                        <a href={meta.locationLink} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-600 hover:bg-purple-100 transition-colors">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                          View on Maps →
-                        </a>
-                      )}
+                      {n.type === "MESS_RECOMMENDATION" &&
+                        meta?.locationLink && (
+                          <a
+                            href={meta.locationLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-600 hover:bg-purple-100 transition-colors"
+                          >
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            View on Maps →
+                          </a>
+                        )}
 
                       <div className="mt-3 flex items-center justify-between">
-                        <p className="text-xs text-[#061b32]/30">{meta?.postedByName || 'Community Member'}</p>
+                        <p className="text-xs text-[#061b32]/30">
+                          {meta?.postedByName || "Community Member"}
+                        </p>
                         {n.postedById !== myId && (
                           <button
                             onClick={async () => {
-                              if (!isLoggedIn()) { window.location.href = '/login'; return; }
+                              if (!isLoggedIn()) {
+                                window.location.href = "/login";
+                                return;
+                              }
                               try {
-                                const res = await api.post('/api/conversations', { otherUserId: n.postedById });
+                                const res = await api.post(
+                                  "/api/conversations",
+                                  { otherUserId: n.postedById },
+                                );
                                 window.location.href = `/conversations?id=${res.data._id}`;
                               } catch (e: any) {
-                                alert(e?.response?.data?.message || 'Failed to open conversation');
+                                alert(
+                                  e?.response?.data?.message ||
+                                    "Failed to open conversation",
+                                );
                               }
                             }}
                             className="flex items-center gap-1.5 rounded-lg border border-[#e2e8f0] px-3 py-1.5 text-xs font-medium text-[#061b32] hover:border-[#9fdbda] transition-colors"
                           >
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                            </svg>
                             Message
                           </button>
                         )}
@@ -311,18 +521,40 @@ export default function CommunityDetailPage() {
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-lg font-bold text-[#061b32]">Create Post</h2>
-              <button onClick={() => setShowCreate(false)} className="text-[#061b32]/40 hover:text-[#061b32]">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <button
+                onClick={() => setShowCreate(false)}
+                className="text-[#061b32]/40 hover:text-[#061b32]"
+              >
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="mb-2 block text-sm font-medium text-[#061b32]">Post Type</label>
+                <label className="mb-2 block text-sm font-medium text-[#061b32]">
+                  Post Type
+                </label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.entries(NOTICE_TYPE_CONFIG).map(([key, val]) => (
-                    <button key={key} onClick={() => { setPostType(key); setPostListingId(''); setPostLocationLink(''); }}
-                      className={`rounded-xl border py-2 text-xs font-medium transition-all ${postType === key ? 'bg-[#061b32] text-white border-[#061b32]' : 'bg-white text-[#061b32] border-[#e2e8f0] hover:border-[#9fdbda]'}`}>
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setPostType(key);
+                        setPostListingId("");
+                        setPostLocationLink("");
+                      }}
+                      className={`rounded-xl border py-2 text-xs font-medium transition-all ${postType === key ? "bg-[#061b32] text-white border-[#061b32]" : "bg-white text-[#061b32] border-[#e2e8f0] hover:border-[#9fdbda]"}`}
+                    >
                       {val.label}
                     </button>
                   ))}
@@ -330,52 +562,92 @@ export default function CommunityDetailPage() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#061b32]">Title</label>
-                <input value={postTitle} onChange={e => setPostTitle(e.target.value)} placeholder="e.g. Roommate needed near PCCOE" className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none" />
+                <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
+                  Title
+                </label>
+                <input
+                  value={postTitle}
+                  onChange={(e) => setPostTitle(e.target.value)}
+                  placeholder="e.g. Roommate needed near PCCOE"
+                  className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none"
+                />
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-[#061b32]">Description</label>
-                <textarea value={postDesc} onChange={e => setPostDesc(e.target.value)} placeholder="Add more details..." rows={3} className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none resize-none" />
+                <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
+                  Description
+                </label>
+                <textarea
+                  value={postDesc}
+                  onChange={(e) => setPostDesc(e.target.value)}
+                  placeholder="Add more details..."
+                  rows={3}
+                  className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none resize-none"
+                />
               </div>
 
               {/* Listing picker for ROOMMATE_NEEDED */}
-              {postType === 'ROOMMATE_NEEDED' && (
+              {postType === "ROOMMATE_NEEDED" && (
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
-                    Link your listing <span className="text-[#061b32]/40 font-normal">(optional)</span>
+                    Link your listing{" "}
+                    <span className="text-[#061b32]/40 font-normal">
+                      (optional)
+                    </span>
                   </label>
                   {myListings.length > 0 ? (
-                    <select value={postListingId} onChange={e => setPostListingId(e.target.value)}
-                      className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none bg-white">
+                    <select
+                      value={postListingId}
+                      onChange={(e) => setPostListingId(e.target.value)}
+                      className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none bg-white"
+                    >
                       <option value="">No listing selected</option>
                       {myListings.map((l: any) => (
-                        <option key={l.id} value={l.id}>{l.title} — ₹{l.rent?.toLocaleString()}/mo</option>
+                        <option key={l.id} value={l.id}>
+                          {l.title} — ₹{l.rent?.toLocaleString()}/mo
+                        </option>
                       ))}
                     </select>
                   ) : (
                     <div className="flex items-center gap-2 rounded-xl border border-[#e2e8f0] px-4 py-2.5">
-                      <p className="text-sm text-[#061b32]/40">No listings yet —</p>
-                      <Link href="/listings/create" className="text-sm text-[#9fdbda] hover:opacity-80">List a property</Link>
+                      <p className="text-sm text-[#061b32]/40">
+                        No listings yet —
+                      </p>
+                      <Link
+                        href="/listings/create"
+                        className="text-sm text-[#9fdbda] hover:opacity-80"
+                      >
+                        List a property
+                      </Link>
                     </div>
                   )}
                 </div>
               )}
 
               {/* Location link for MESS_RECOMMENDATION */}
-              {postType === 'MESS_RECOMMENDATION' && (
+              {postType === "MESS_RECOMMENDATION" && (
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
-                    Google Maps link <span className="text-[#061b32]/40 font-normal">(optional)</span>
+                    Google Maps link{" "}
+                    <span className="text-[#061b32]/40 font-normal">
+                      (optional)
+                    </span>
                   </label>
-                  <input value={postLocationLink} onChange={e => setPostLocationLink(e.target.value)}
+                  <input
+                    value={postLocationLink}
+                    onChange={(e) => setPostLocationLink(e.target.value)}
                     placeholder="https://maps.google.com/..."
-                    className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none" />
+                    className="w-full rounded-xl border border-[#e2e8f0] px-4 py-2.5 text-sm text-[#061b32] focus:border-[#9fdbda] focus:outline-none"
+                  />
                 </div>
               )}
 
-              <button onClick={createPost} disabled={posting || !postTitle || !postDesc} className="w-full rounded-xl bg-[#9fdbda] py-3 text-sm font-semibold text-[#061b32] hover:opacity-90 disabled:opacity-50 transition-opacity">
-                {posting ? 'Posting...' : 'Post'}
+              <button
+                onClick={createPost}
+                disabled={posting || !postTitle || !postDesc}
+                className="w-full rounded-xl bg-[#9fdbda] py-3 text-sm font-semibold text-[#061b32] hover:opacity-90 disabled:opacity-50 transition-opacity"
+              >
+                {posting ? "Posting..." : "Post"}
               </button>
             </div>
           </div>

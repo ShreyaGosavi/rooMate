@@ -1,4 +1,4 @@
-import { GatewayGuard } from "../auth/gateway.guard";
+import { GatewayGuard } from '../auth/gateway.guard';
 import {
   Controller,
   Get,
@@ -14,7 +14,6 @@ import {
 import type { Request } from 'express';
 import { NotificationService } from './notification.service';
 import { NotificationQueryDto } from './dto/notification-query.dto';
-import { JwtGuard } from './guards/jwt.guard';
 
 @Controller('notifications')
 export class NotificationController {

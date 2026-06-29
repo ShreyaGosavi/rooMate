@@ -1,4 +1,11 @@
-import { IsString, IsNotEmpty, IsEnum, IsOptional, IsEmail, IsUrl } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEnum,
+  IsOptional,
+  IsEmail,
+  IsUrl,
+} from "class-validator";
 import { CommunityType } from "../prisma/generated";
 
 export class RequestCommunityDto {
@@ -27,6 +34,6 @@ export class RequestCommunityDto {
 }
 
 export class UpdateRequestStatusDto {
-  @IsEnum(['APPROVED', 'REJECTED'])
+  @IsEnum(["APPROVED", "REJECTED"])
   status: "APPROVED" | "REJECTED";
 }

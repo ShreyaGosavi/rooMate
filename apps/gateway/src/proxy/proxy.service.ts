@@ -22,15 +22,27 @@ export class ProxyService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private extractUser(req: Request): { id: string; email: string; isAdmin: boolean } | null {
+  private extractUser(
+    req: Request,
+  ): { id: string; email: string; isAdmin: boolean } | null {
     const auth = req.headers['authorization'];
     if (!auth?.startsWith('Bearer ')) return null;
     const token = auth.slice(7);
     try {
-      const payload = this.jwtService.verify<{ sub: string; email: string; isAdmin: boolean }>(token, {
-        secret: this.configService.get<string>('JWT_ACCESS_SECRET') ?? 'roomate_access_secret_dev',
+      const payload = this.jwtService.verify<{
+        sub: string;
+        email: string;
+        isAdmin: boolean;
+      }>(token, {
+        secret:
+          this.configService.get<string>('JWT_ACCESS_SECRET') ??
+          'roomate_access_secret_dev',
       });
-      return { id: payload.sub, email: payload.email, isAdmin: payload.isAdmin };
+      return {
+        id: payload.sub,
+        email: payload.email,
+        isAdmin: payload.isAdmin,
+      };
     } catch {
       return null;
     }
@@ -49,7 +61,10 @@ export class ProxyService {
     const user = this.extractUser(req);
 
     if (isProtected && !user) {
-      return { status: 401, data: { message: 'Unauthorized', statusCode: 401 } };
+      return {
+        status: 401,
+        data: { message: 'Unauthorized', statusCode: 401 },
+      };
     }
 
     const baseUrl = this.configService.get<string>(route.serviceUrlEnvKey);
@@ -60,7 +75,7 @@ export class ProxyService {
 
     // Build forwarded headers
     const forwardedHeaders: Record<string, string | undefined> = {
-      ...req.headers as Record<string, string>,
+      ...(req.headers as Record<string, string>),
       host: undefined,
       'content-length': undefined,
     };
@@ -85,7 +100,9 @@ export class ProxyService {
       );
 
       const duration = Date.now() - start;
-      this.logger.log(`${req.method} ${req.originalUrl} → ${response.status} (${duration}ms)`);
+      this.logger.log(
+        `${req.method} ${req.originalUrl} → ${response.status} (${duration}ms)`,
+      );
 
       return { status: response.status, data: response.data };
     } catch (error) {
@@ -93,14 +110,18 @@ export class ProxyService {
       const duration = Date.now() - start;
 
       if (axiosError.response) {
-        this.logger.warn(`${req.method} ${req.originalUrl} → ${axiosError.response.status} (${duration}ms)`);
+        this.logger.warn(
+          `${req.method} ${req.originalUrl} → ${axiosError.response.status} (${duration}ms)`,
+        );
         return {
           status: axiosError.response.status,
           data: axiosError.response.data,
         };
       }
 
-      this.logger.error(`${req.method} ${req.originalUrl} → 503 (${duration}ms)`);
+      this.logger.error(
+        `${req.method} ${req.originalUrl} → 503 (${duration}ms)`,
+      );
       return {
         status: 503,
         data: { message: 'Service unavailable', statusCode: 503 },

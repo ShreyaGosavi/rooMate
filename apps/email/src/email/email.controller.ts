@@ -51,23 +51,48 @@ export class EmailController {
   }
 
   @MessagePattern('community.requested')
-  async handleCommunityRequested(@Payload() data: { requestedByEmail: string; communityName: string }): Promise<void> {
+  async handleCommunityRequested(
+    @Payload() data: { requestedByEmail: string; communityName: string },
+  ): Promise<void> {
     if (data.requestedByEmail) {
-      await this.emailService.sendCommunitySubmittedEmail(data.requestedByEmail, data.communityName);
+      await this.emailService.sendCommunitySubmittedEmail(
+        data.requestedByEmail,
+        data.communityName,
+      );
     }
   }
 
   @MessagePattern('community.approved')
-  async handleCommunityApproved(@Payload() data: { requestedById: string; communityName: string; requesterEmail?: string }): Promise<void> {
+  async handleCommunityApproved(
+    @Payload()
+    data: {
+      requestedById: string;
+      communityName: string;
+      requesterEmail?: string;
+    },
+  ): Promise<void> {
     if (data.requesterEmail) {
-      await this.emailService.sendCommunityApprovedEmail(data.requesterEmail, data.communityName);
+      await this.emailService.sendCommunityApprovedEmail(
+        data.requesterEmail,
+        data.communityName,
+      );
     }
   }
 
   @MessagePattern('community.rejected')
-  async handleCommunityRejected(@Payload() data: { requestedById: string; communityName: string; requesterEmail?: string }): Promise<void> {
+  async handleCommunityRejected(
+    @Payload()
+    data: {
+      requestedById: string;
+      communityName: string;
+      requesterEmail?: string;
+    },
+  ): Promise<void> {
     if (data.requesterEmail) {
-      await this.emailService.sendCommunityRejectedEmail(data.requesterEmail, data.communityName);
+      await this.emailService.sendCommunityRejectedEmail(
+        data.requesterEmail,
+        data.communityName,
+      );
     }
   }
 }

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SavedPage() {
   const router = useRouter();
   useEffect(() => {
-    router.replace('/profile?tab=Saved');
+    router.replace("/profile?tab=Saved");
   }, []);
   return null;
 }

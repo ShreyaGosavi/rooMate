@@ -147,12 +147,16 @@ export class CommunityService {
       data: { status },
     });
 
-    let requesterEmail = '';
+    let requesterEmail = "";
     try {
-      const authUrl = process.env.AUTH_SERVICE_URL ?? 'http://localhost:3001';
-      const res = await axios.get(`${authUrl}/api/auth/users/${request.requestedById}`);
-      requesterEmail = (res.data as any)?.email ?? '';
-    } catch {}
+      const authUrl = process.env.AUTH_SERVICE_URL ?? "http://localhost:3001";
+      const res = await axios.get(
+        `${authUrl}/api/auth/users/${request.requestedById}`,
+      );
+      requesterEmail = res.data?.email ?? "";
+    } catch {
+      /* email lookup failed, continue without it */
+    }
 
     if (status === RequestStatus.APPROVED) {
       await this.prisma.community.create({
@@ -186,8 +190,8 @@ export class CommunityService {
 
   async findAllPendingRequests() {
     return this.prisma.communityRequest.findMany({
-      where: { status: 'PENDING' },
-      orderBy: { createdAt: 'desc' },
+      where: { status: "PENDING" },
+      orderBy: { createdAt: "desc" },
     });
   }
 }

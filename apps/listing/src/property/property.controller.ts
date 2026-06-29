@@ -72,7 +72,7 @@ export class PropertyController {
   findPending() {
     return this.propertyService.findPending();
   }
-    @Get(":id")
+  @Get(":id")
   findById(@Param("id") id: string) {
     return this.propertyService.findById(id);
   }
@@ -115,8 +115,9 @@ export class PropertyController {
   async getProofUrl(@Param("id") id: string) {
     const property = await this.propertyService.findById(id);
     if (!property?.ownershipProof) return { url: null };
-    const url = await this.uploadService.getSignedProofUrl(property.ownershipProof);
+    const url = await this.uploadService.getSignedProofUrl(
+      property.ownershipProof,
+    );
     return { url };
   }
-
 }

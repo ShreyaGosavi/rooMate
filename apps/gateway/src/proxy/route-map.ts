@@ -13,10 +13,7 @@ export const ROUTE_MAP: ServiceRoute[] = [
 ];
 
 // These prefixes require a valid JWT
-export const PROTECTED_PREFIXES: string[] = [
-  'notifications',
-  'conversations',
-];
+export const PROTECTED_PREFIXES: string[] = ['notifications', 'conversations'];
 
 // Auth and listings/communities have mixed public/private routes
 // so they handle their own auth internally

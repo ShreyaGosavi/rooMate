@@ -7,6 +7,11 @@ import { NoticeModule } from "./notice/notice.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),PrismaModule, KafkaModule, CommunityModule, NoticeModule],
+    ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
+    KafkaModule,
+    CommunityModule,
+    NoticeModule,
+  ],
 })
 export class AppModule {}

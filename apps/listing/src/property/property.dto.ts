@@ -1,5 +1,13 @@
-import { IsString, IsNotEmpty, IsNumber, IsEnum, IsOptional, IsArray, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsNumber,
+  IsEnum,
+  IsOptional,
+  IsArray,
+  Min,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { AmenityType, BHK, Gender, PropertyType } from "../prisma/generated";
 
 export class CreatePropertyDto {
@@ -216,7 +224,15 @@ export function parseCreateDto(raw: any): CreatePropertyDto {
     latitude: Number(raw.latitude),
     longitude: Number(raw.longitude),
     availableFrom: raw.availableFrom ? new Date(raw.availableFrom) : undefined,
-    suitableFitFor: Array.isArray(raw.suitableFitFor) ? raw.suitableFitFor : raw.suitableFitFor ? [raw.suitableFitFor] : [],
-    amenities: Array.isArray(raw.amenities) ? raw.amenities : raw.amenities ? [raw.amenities] : [],
+    suitableFitFor: Array.isArray(raw.suitableFitFor)
+      ? raw.suitableFitFor
+      : raw.suitableFitFor
+        ? [raw.suitableFitFor]
+        : [],
+    amenities: Array.isArray(raw.amenities)
+      ? raw.amenities
+      : raw.amenities
+        ? [raw.amenities]
+        : [],
   };
 }

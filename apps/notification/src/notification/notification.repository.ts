@@ -34,7 +34,11 @@ export class NotificationRepository {
     limit: number,
     unreadOnly: boolean,
   ): Promise<{ notifications: NotificationDocument[]; total: number }> {
-    const filter: { userId: string; read?: boolean; isAdminNotification: boolean } = {
+    const filter: {
+      userId: string;
+      read?: boolean;
+      isAdminNotification: boolean;
+    } = {
       userId,
       isAdminNotification: false,
     };
@@ -98,7 +102,9 @@ export class NotificationRepository {
     );
   }
 
-  async markAdminNotificationRead(id: string): Promise<NotificationDocument | null> {
+  async markAdminNotificationRead(
+    id: string,
+  ): Promise<NotificationDocument | null> {
     return this.notificationModel.findOneAndUpdate(
       { _id: id, isAdminNotification: true },
       { read: true },

@@ -139,7 +139,8 @@ export class PropertyService {
     const where: any = {
       verificationStatus: PropertyVerificationStatus.VERIFIED,
       isAvailable: true,
-      ...(minRent && maxRent && { rent: { gte: Number(minRent), lte: Number(maxRent) } }),
+      ...(minRent &&
+        maxRent && { rent: { gte: Number(minRent), lte: Number(maxRent) } }),
       ...(minRent && !maxRent && { rent: { gte: Number(minRent) } }),
       ...(maxRent && !minRent && { rent: { lte: Number(maxRent) } }),
       ...(gender && { genderPreference: gender }),
@@ -148,7 +149,7 @@ export class PropertyService {
     };
 
     if (search) {
-      const cleanSearch = (search as string).replace(/^near\s+/i, '').trim();
+      const cleanSearch = search.replace(/^near\s+/i, "").trim();
       const searchTerm = `%${cleanSearch}%`;
 
       const textResults = await this.prisma.$queryRaw<{ id: string }[]>`
@@ -173,10 +174,11 @@ export class PropertyService {
       try {
         const googleKey = process.env.GOOGLE_MAPS_KEY;
         const geoRes = await axios.get(
-          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(cleanSearch)}&key=${googleKey}&region=in`
+          `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(cleanSearch)}&key=${googleKey}&region=in`,
         );
         if (geoRes.data.results?.length > 0) {
-          const { lat: gLat, lng: gLng } = geoRes.data.results[0].geometry.location;
+          const { lat: gLat, lng: gLng } =
+            geoRes.data.results[0].geometry.location;
           const radiusKm = 5;
           const geoResults = await this.prisma.$queryRaw<{ id: string }[]>`
             SELECT id FROM "Property"
@@ -191,13 +193,17 @@ export class PropertyService {
             ) <= ${radiusKm}
           `;
           geoIds = geoResults.map((r: any) => r.id);
-          this.logger.log(`Geocoded "${cleanSearch}" to ${gLat},${gLng} - ${geoIds.length} nearby`);
+          this.logger.log(
+            `Geocoded "${cleanSearch}" to ${gLat},${gLng} - ${geoIds.length} nearby`,
+          );
         }
       } catch (e: any) {
         this.logger.warn(`Geocoding failed: ${e.message}`);
       }
 
-      const allIds = [...new Set([...textResults.map((r: any) => r.id), ...geoIds])];
+      const allIds = [
+        ...new Set([...textResults.map((r: any) => r.id), ...geoIds]),
+      ];
       where.id = allIds.length > 0 ? { in: allIds } : { in: [] };
     }
 
@@ -214,7 +220,6 @@ export class PropertyService {
 
     return { results, total, page: pageNum, limit: limitNum };
   }
-
 
   async findById(propertyId: string) {
     const property = await this.prisma.property.findUnique({
@@ -275,7 +280,9 @@ export class PropertyService {
       ...(dto.visitingHrs && { visitingHrs: dto.visitingHrs }),
       ...(dto.amenities && { amenities: { set: dto.amenities } }),
       ...(dto.rules && { rules: dto.rules as Prisma.InputJsonValue }),
-      ...(dto.suitableFitFor && { suitableFitFor: { set: dto.suitableFitFor } }),
+      ...(dto.suitableFitFor && {
+        suitableFitFor: { set: dto.suitableFitFor },
+      }),
       ...(dto.availableFrom && { availableFrom: dto.availableFrom }),
     };
 
@@ -337,7 +344,7 @@ export class PropertyService {
     const results = await this.prisma.property.findMany({
       where: { verificationStatus: PropertyVerificationStatus.PENDING },
       include: { PropertyStats: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
     return { results, total: results.length, page: 1, limit: 100 };
   }

@@ -8,8 +8,7 @@ import { CommunityController } from "./community/community.controller";
 import { StatsController } from "./stats/stats.controller";
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ isGlobal: true }),HttpModule, AuthModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), HttpModule, AuthModule],
   controllers: [PropertyController, CommunityController, StatsController],
   providers: [AdminHttpService],
 })

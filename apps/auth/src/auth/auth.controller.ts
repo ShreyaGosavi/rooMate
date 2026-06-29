@@ -32,7 +32,9 @@ export class AuthController {
   @Get('verify-email')
   async verifyEmail(@Query('token') token: string, @Res() res: Response) {
     const email = await this.authService.verifyEmail(token);
-    return res.redirect(`http://localhost:3000/email-verified?email=${encodeURIComponent(email)}`);
+    return res.redirect(
+      `http://localhost:3000/email-verified?email=${encodeURIComponent(email)}`,
+    );
   }
 
   @Get('verification-status')

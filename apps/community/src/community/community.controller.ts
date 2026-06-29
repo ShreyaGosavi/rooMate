@@ -69,5 +69,4 @@ export class CommunityController {
   findAllPendingRequests() {
     return this.communityService.findAllPendingRequests();
   }
-
 }

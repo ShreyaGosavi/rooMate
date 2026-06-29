@@ -1,4 +1,4 @@
-import { AllExceptionsFilter } from '@roomate/shared-types';
+import { AllExceptionsFilter } from "@roomate/shared-types";
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe, Logger } from "@nestjs/common";
 import { AppModule } from "./app.module";

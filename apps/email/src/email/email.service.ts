@@ -44,7 +44,10 @@ export class EmailService {
     await this.sendWithRetry(mail, 'property-rejected');
   }
 
-  async sendCommunitySubmittedEmail(toEmail: string, communityName: string): Promise<void> {
+  async sendCommunitySubmittedEmail(
+    toEmail: string,
+    communityName: string,
+  ): Promise<void> {
     const mail = {
       to: toEmail,
       from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
@@ -54,7 +57,10 @@ export class EmailService {
     await this.sendWithRetry(mail, 'community-submitted');
   }
 
-  async sendCommunityApprovedEmail(toEmail: string, communityName: string): Promise<void> {
+  async sendCommunityApprovedEmail(
+    toEmail: string,
+    communityName: string,
+  ): Promise<void> {
     const mail = {
       to: toEmail,
       from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
@@ -64,7 +70,10 @@ export class EmailService {
     await this.sendWithRetry(mail, 'community-approved');
   }
 
-  async sendCommunityRejectedEmail(toEmail: string, communityName: string): Promise<void> {
+  async sendCommunityRejectedEmail(
+    toEmail: string,
+    communityName: string,
+  ): Promise<void> {
     const mail = {
       to: toEmail,
       from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },

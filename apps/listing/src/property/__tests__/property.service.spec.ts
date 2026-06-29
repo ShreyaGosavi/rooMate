@@ -66,7 +66,7 @@ const mockProperty = {
   ownerPhone: "9999999999",
   images: [],
   suitableFitFor: [],
-      amenities: [],
+  amenities: [],
   verificationStatus: PropertyVerificationStatus.VERIFIED,
   isAvailable: true,
   createdAt: new Date(),
@@ -96,7 +96,7 @@ describe("PropertyService", () => {
 
       const dto = {
         title: "Test PG",
-              propertyType: PropertyType.PG_HOSTEL,
+        propertyType: PropertyType.PG_HOSTEL,
         rent: 10000,
         deposit: 20000,
         maintenance: 500,
@@ -114,7 +114,7 @@ describe("PropertyService", () => {
         longitude: 73.8077,
         ownerPhone: "9999999999",
         suitableFitFor: [],
-      amenities: [],
+        amenities: [],
       };
 
       const result = await service.create(dto, "user-1", "user@test.com", []);
