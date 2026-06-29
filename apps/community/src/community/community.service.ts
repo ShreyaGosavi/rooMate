@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ConflictException,
 } from "@nestjs/common";
+import axios from "axios";
 import { PrismaService } from "../prisma/prisma.service";
 import { KafkaProducer } from "../kafka/kafka.producer";
 import { RequestCommunityDto } from "./community.dto";
@@ -146,6 +147,17 @@ export class CommunityService {
       data: { status },
     });
 
+    let requesterEmail = "";
+    try {
+      const authUrl = process.env.AUTH_SERVICE_URL ?? "http://localhost:3001";
+      const res = await axios.get(
+        `${authUrl}/api/auth/users/${request.requestedById}`,
+      );
+      requesterEmail = res.data?.email ?? "";
+    } catch {
+      /* email lookup failed, continue without it */
+    }
+
     if (status === RequestStatus.APPROVED) {
       await this.prisma.community.create({
         data: {
@@ -162,15 +174,24 @@ export class CommunityService {
         requestId,
         communityName: request.communityName,
         requestedById: request.requestedById,
+        requesterEmail,
       });
     } else {
       await this.kafka.emit("community.rejected", {
         requestId,
         communityName: request.communityName,
         requestedById: request.requestedById,
+        requesterEmail,
       });
     }
 
     return updated;
+  }
+
+  async findAllPendingRequests() {
+    return this.prisma.communityRequest.findMany({
+      where: { status: "PENDING" },
+      orderBy: { createdAt: "desc" },
+    });
   }
 }

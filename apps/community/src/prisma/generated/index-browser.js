@@ -206,7 +206,9 @@ exports.RequestStatus = exports.$Enums.RequestStatus = {
 
 exports.NoticeType = exports.$Enums.NoticeType = {
   ROOMMATE_NEEDED: 'ROOMMATE_NEEDED',
-  SPARE_ITEM_GIVEAWAY: 'SPARE_ITEM_GIVEAWAY'
+  SPARE_ITEM_GIVEAWAY: 'SPARE_ITEM_GIVEAWAY',
+  MESS_RECOMMENDATION: 'MESS_RECOMMENDATION',
+  GENERAL: 'GENERAL'
 };
 
 exports.Prisma.ModelName = {

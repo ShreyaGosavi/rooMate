@@ -1,22 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EmailService } from './email.service';
 import { ConfigModule } from '@nestjs/config';
-import { Resend } from 'resend';
+import sgMail from '@sendgrid/mail';
 
-jest.mock('resend');
+jest.mock('@sendgrid/mail', () => ({
+  setApiKey: jest.fn(),
+  send: jest.fn(),
+}));
 
 describe('EmailService', () => {
   let service: EmailService;
-  let mockResendSend: jest.Mock;
+  let mockSend: jest.Mock;
 
   beforeEach(async () => {
-    mockResendSend = jest
-      .fn()
-      .mockResolvedValue({ data: { id: 'test-email-id' }, error: null });
-
-    (Resend as jest.Mock).mockImplementation(() => ({
-      emails: { send: mockResendSend },
-    }));
+    mockSend = sgMail.send as jest.Mock;
+    mockSend.mockResolvedValue([{ statusCode: 202 }, {}]);
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot()],
@@ -31,38 +29,37 @@ describe('EmailService', () => {
   });
 
   describe('sendWelcomeEmail', () => {
-    it('should call Resend with correct payload', async () => {
+    it('should call SendGrid with correct payload', async () => {
       await service.sendWelcomeEmail({
         userId: 'user-123',
         email: 'test@example.com',
         name: 'Test User',
       });
-      expect(mockResendSend).toHaveBeenCalledTimes(1);
-      expect(mockResendSend).toHaveBeenCalledWith({
-        from: 'RooMate <onboarding@resend.dev>',
-        to: 'test@example.com',
-        subject: 'Welcome to RooMate!',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        html: expect.stringContaining('Hey Test User'),
-      });
+      expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(mockSend).toHaveBeenCalledWith(
+        expect.objectContaining({
+          to: 'test@example.com',
+          subject: 'Welcome to RooMate!',
+          html: expect.stringContaining('Hey Test User'),
+        }),
+      );
     });
 
     it('should retry on failure and succeed on second attempt', async () => {
-      mockResendSend
+      mockSend
         .mockRejectedValueOnce(new Error('Network error'))
-        .mockResolvedValueOnce({ data: { id: 'test-email-id' }, error: null });
+        .mockResolvedValueOnce([{ statusCode: 202 }, {}]);
 
       await service.sendWelcomeEmail({
         userId: 'user-123',
         email: 'test@example.com',
         name: 'Test User',
       });
-
-      expect(mockResendSend).toHaveBeenCalledTimes(2);
+      expect(mockSend).toHaveBeenCalledTimes(2);
     });
 
     it('should throw after all retries are exhausted', async () => {
-      mockResendSend.mockRejectedValue(new Error('Resend is down'));
+      mockSend.mockRejectedValue(new Error('SendGrid is down'));
 
       await expect(
         service.sendWelcomeEmail({
@@ -70,20 +67,18 @@ describe('EmailService', () => {
           email: 'test@example.com',
           name: 'Test User',
         }),
-      ).rejects.toThrow('Resend is down');
-
-      expect(mockResendSend).toHaveBeenCalledTimes(3);
+      ).rejects.toThrow('SendGrid is down');
+      expect(mockSend).toHaveBeenCalledTimes(3);
     });
   });
 
   describe('sendPropertySubmittedEmail', () => {
     it('should send property submitted email', async () => {
       await service.sendPropertySubmittedEmail('owner@example.com');
-      expect(mockResendSend).toHaveBeenCalledTimes(1);
-      expect(mockResendSend).toHaveBeenCalledWith(
+      expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'owner@example.com',
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           subject: expect.stringContaining('received'),
         }),
       );
@@ -93,11 +88,10 @@ describe('EmailService', () => {
   describe('sendPropertyApprovedEmail', () => {
     it('should send property approved email', async () => {
       await service.sendPropertyApprovedEmail('owner@example.com');
-      expect(mockResendSend).toHaveBeenCalledTimes(1);
-      expect(mockResendSend).toHaveBeenCalledWith(
+      expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'owner@example.com',
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           subject: expect.stringContaining('live'),
         }),
       );
@@ -107,11 +101,10 @@ describe('EmailService', () => {
   describe('sendPropertyRejectedEmail', () => {
     it('should send property rejected email', async () => {
       await service.sendPropertyRejectedEmail('owner@example.com');
-      expect(mockResendSend).toHaveBeenCalledTimes(1);
-      expect(mockResendSend).toHaveBeenCalledWith(
+      expect(mockSend).toHaveBeenCalledTimes(1);
+      expect(mockSend).toHaveBeenCalledWith(
         expect.objectContaining({
           to: 'owner@example.com',
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           subject: expect.stringContaining('listing'),
         }),
       );

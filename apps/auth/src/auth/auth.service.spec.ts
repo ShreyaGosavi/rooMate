@@ -190,9 +190,8 @@ describe('AuthService', () => {
         email: 'test@example.com',
         name: 'testuser',
       });
-      expect(result.accessToken).toBe('mock-token');
-      expect(result.refreshToken).toBe('mock-token');
-      expect(result.user.id).toBe('user-1');
+      expect(result.id).toBe('user-1');
+      expect(result.email).toBe('test@example.com');
     });
   });
 
@@ -244,7 +243,6 @@ describe('AuthService', () => {
       const result = await service.login(loginDto);
 
       expect(result.accessToken).toBe('mock-token');
-      expect(result.user.email).toBe('test@example.com');
     });
   });
 

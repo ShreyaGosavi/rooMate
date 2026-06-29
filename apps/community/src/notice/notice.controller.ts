@@ -10,7 +10,7 @@ import {
   Request,
 } from "@nestjs/common";
 import { NoticeService } from "./notice.service";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 import { CreateNoticeDto } from "./notice.dto";
 import { NoticeType } from "../prisma/generated";
 
@@ -19,7 +19,7 @@ export class NoticeController {
   constructor(private readonly noticeService: NoticeService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   getNotices(
     @Param("id") communityId: string,
     @Query("type") type?: NoticeType,
@@ -28,7 +28,7 @@ export class NoticeController {
   }
 
   @Get(":noticeId")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   getNoticeById(
     @Param("id") communityId: string,
     @Param("noticeId") noticeId: string,
@@ -37,7 +37,7 @@ export class NoticeController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   createNotice(
     @Param("id") communityId: string,
     @Body() dto: CreateNoticeDto,
@@ -47,7 +47,7 @@ export class NoticeController {
   }
 
   @Delete(":noticeId")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   deleteNotice(
     @Param("id") communityId: string,
     @Param("noticeId") noticeId: string,

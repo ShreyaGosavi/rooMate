@@ -125,13 +125,12 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.PropertyScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  description: 'description',
   propertyType: 'propertyType',
   rent: 'rent',
   deposit: 'deposit',
   maintenance: 'maintenance',
-  isAvailable: 'isAvailable',
   sharing: 'sharing',
+  isAvailable: 'isAvailable',
   genderPreference: 'genderPreference',
   bhk: 'bhk',
   suitableFitFor: 'suitableFitFor',
@@ -150,6 +149,7 @@ exports.Prisma.PropertyScalarFieldEnum = {
   ownerId: 'ownerId',
   ownerPhone: 'ownerPhone',
   visitingHrs: 'visitingHrs',
+  availableFrom: 'availableFrom',
   ownershipProof: 'ownershipProof',
   verifiedAt: 'verifiedAt',
   amenities: 'amenities',
@@ -200,8 +200,7 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 exports.PropertyType = exports.$Enums.PropertyType = {
-  HOSTEL: 'HOSTEL',
-  PG: 'PG',
+  PG_HOSTEL: 'PG_HOSTEL',
   APARTMENT: 'APARTMENT',
   OTHER: 'OTHER'
 };

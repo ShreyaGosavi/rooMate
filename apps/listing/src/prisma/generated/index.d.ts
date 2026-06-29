@@ -34,8 +34,7 @@ export type SavedProperty =
  */
 export namespace $Enums {
   export const PropertyType: {
-    HOSTEL: "HOSTEL";
-    PG: "PG";
+    PG_HOSTEL: "PG_HOSTEL";
     APARTMENT: "APARTMENT";
     OTHER: "OTHER";
   };
@@ -527,7 +526,7 @@ export namespace Prisma {
         ? False
         : T extends Uint8Array
           ? False
-          : T extends bigint
+          : T extends BigInt
             ? False
             : T extends object
               ? True
@@ -1241,16 +1240,14 @@ export namespace Prisma {
   export type PropertyMinAggregateOutputType = {
     id: string | null;
     title: string | null;
-    description: string | null;
     propertyType: $Enums.PropertyType | null;
     rent: number | null;
     deposit: number | null;
     maintenance: number | null;
-    isAvailable: boolean | null;
     sharing: number | null;
+    isAvailable: boolean | null;
     genderPreference: $Enums.Gender | null;
     bhk: $Enums.BHK | null;
-    suitableFitFor: string | null;
     addressLine1: string | null;
     addressLine2: string | null;
     locality: string | null;
@@ -1266,6 +1263,7 @@ export namespace Prisma {
     ownerId: string | null;
     ownerPhone: string | null;
     visitingHrs: string | null;
+    availableFrom: Date | null;
     ownershipProof: string | null;
     verifiedAt: Date | null;
     createdAt: Date | null;
@@ -1276,16 +1274,14 @@ export namespace Prisma {
   export type PropertyMaxAggregateOutputType = {
     id: string | null;
     title: string | null;
-    description: string | null;
     propertyType: $Enums.PropertyType | null;
     rent: number | null;
     deposit: number | null;
     maintenance: number | null;
-    isAvailable: boolean | null;
     sharing: number | null;
+    isAvailable: boolean | null;
     genderPreference: $Enums.Gender | null;
     bhk: $Enums.BHK | null;
-    suitableFitFor: string | null;
     addressLine1: string | null;
     addressLine2: string | null;
     locality: string | null;
@@ -1301,6 +1297,7 @@ export namespace Prisma {
     ownerId: string | null;
     ownerPhone: string | null;
     visitingHrs: string | null;
+    availableFrom: Date | null;
     ownershipProof: string | null;
     verifiedAt: Date | null;
     createdAt: Date | null;
@@ -1311,13 +1308,12 @@ export namespace Prisma {
   export type PropertyCountAggregateOutputType = {
     id: number;
     title: number;
-    description: number;
     propertyType: number;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable: number;
     sharing: number;
+    isAvailable: number;
     genderPreference: number;
     bhk: number;
     suitableFitFor: number;
@@ -1336,6 +1332,7 @@ export namespace Prisma {
     ownerId: number;
     ownerPhone: number;
     visitingHrs: number;
+    availableFrom: number;
     ownershipProof: number;
     verifiedAt: number;
     amenities: number;
@@ -1368,16 +1365,14 @@ export namespace Prisma {
   export type PropertyMinAggregateInputType = {
     id?: true;
     title?: true;
-    description?: true;
     propertyType?: true;
     rent?: true;
     deposit?: true;
     maintenance?: true;
-    isAvailable?: true;
     sharing?: true;
+    isAvailable?: true;
     genderPreference?: true;
     bhk?: true;
-    suitableFitFor?: true;
     addressLine1?: true;
     addressLine2?: true;
     locality?: true;
@@ -1393,6 +1388,7 @@ export namespace Prisma {
     ownerId?: true;
     ownerPhone?: true;
     visitingHrs?: true;
+    availableFrom?: true;
     ownershipProof?: true;
     verifiedAt?: true;
     createdAt?: true;
@@ -1403,16 +1399,14 @@ export namespace Prisma {
   export type PropertyMaxAggregateInputType = {
     id?: true;
     title?: true;
-    description?: true;
     propertyType?: true;
     rent?: true;
     deposit?: true;
     maintenance?: true;
-    isAvailable?: true;
     sharing?: true;
+    isAvailable?: true;
     genderPreference?: true;
     bhk?: true;
-    suitableFitFor?: true;
     addressLine1?: true;
     addressLine2?: true;
     locality?: true;
@@ -1428,6 +1422,7 @@ export namespace Prisma {
     ownerId?: true;
     ownerPhone?: true;
     visitingHrs?: true;
+    availableFrom?: true;
     ownershipProof?: true;
     verifiedAt?: true;
     createdAt?: true;
@@ -1438,13 +1433,12 @@ export namespace Prisma {
   export type PropertyCountAggregateInputType = {
     id?: true;
     title?: true;
-    description?: true;
     propertyType?: true;
     rent?: true;
     deposit?: true;
     maintenance?: true;
-    isAvailable?: true;
     sharing?: true;
+    isAvailable?: true;
     genderPreference?: true;
     bhk?: true;
     suitableFitFor?: true;
@@ -1463,6 +1457,7 @@ export namespace Prisma {
     ownerId?: true;
     ownerPhone?: true;
     visitingHrs?: true;
+    availableFrom?: true;
     ownershipProof?: true;
     verifiedAt?: true;
     amenities?: true;
@@ -1568,16 +1563,15 @@ export namespace Prisma {
   export type PropertyGroupByOutputType = {
     id: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable: boolean;
     sharing: number;
+    isAvailable: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor: string | null;
+    suitableFitFor: string[];
     addressLine1: string;
     addressLine2: string | null;
     locality: string;
@@ -1593,6 +1587,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs: string | null;
+    availableFrom: Date | null;
     ownershipProof: string | null;
     verifiedAt: Date | null;
     amenities: $Enums.AmenityType[];
@@ -1627,13 +1622,12 @@ export namespace Prisma {
     {
       id?: boolean;
       title?: boolean;
-      description?: boolean;
       propertyType?: boolean;
       rent?: boolean;
       deposit?: boolean;
       maintenance?: boolean;
-      isAvailable?: boolean;
       sharing?: boolean;
+      isAvailable?: boolean;
       genderPreference?: boolean;
       bhk?: boolean;
       suitableFitFor?: boolean;
@@ -1652,6 +1646,7 @@ export namespace Prisma {
       ownerId?: boolean;
       ownerPhone?: boolean;
       visitingHrs?: boolean;
+      availableFrom?: boolean;
       ownershipProof?: boolean;
       verifiedAt?: boolean;
       amenities?: boolean;
@@ -1673,13 +1668,12 @@ export namespace Prisma {
     {
       id?: boolean;
       title?: boolean;
-      description?: boolean;
       propertyType?: boolean;
       rent?: boolean;
       deposit?: boolean;
       maintenance?: boolean;
-      isAvailable?: boolean;
       sharing?: boolean;
+      isAvailable?: boolean;
       genderPreference?: boolean;
       bhk?: boolean;
       suitableFitFor?: boolean;
@@ -1698,6 +1692,7 @@ export namespace Prisma {
       ownerId?: boolean;
       ownerPhone?: boolean;
       visitingHrs?: boolean;
+      availableFrom?: boolean;
       ownershipProof?: boolean;
       verifiedAt?: boolean;
       amenities?: boolean;
@@ -1713,13 +1708,12 @@ export namespace Prisma {
   export type PropertySelectScalar = {
     id?: boolean;
     title?: boolean;
-    description?: boolean;
     propertyType?: boolean;
     rent?: boolean;
     deposit?: boolean;
     maintenance?: boolean;
-    isAvailable?: boolean;
     sharing?: boolean;
+    isAvailable?: boolean;
     genderPreference?: boolean;
     bhk?: boolean;
     suitableFitFor?: boolean;
@@ -1738,6 +1732,7 @@ export namespace Prisma {
     ownerId?: boolean;
     ownerPhone?: boolean;
     visitingHrs?: boolean;
+    availableFrom?: boolean;
     ownershipProof?: boolean;
     verifiedAt?: boolean;
     amenities?: boolean;
@@ -1771,16 +1766,15 @@ export namespace Prisma {
       {
         id: string;
         title: string;
-        description: string;
         propertyType: $Enums.PropertyType;
         rent: number;
         deposit: number;
         maintenance: number;
-        isAvailable: boolean;
         sharing: number;
+        isAvailable: boolean;
         genderPreference: $Enums.Gender;
         bhk: $Enums.BHK;
-        suitableFitFor: string | null;
+        suitableFitFor: string[];
         addressLine1: string;
         addressLine2: string | null;
         locality: string;
@@ -1796,6 +1790,7 @@ export namespace Prisma {
         ownerId: string;
         ownerPhone: string;
         visitingHrs: string | null;
+        availableFrom: Date | null;
         ownershipProof: string | null;
         verifiedAt: Date | null;
         amenities: $Enums.AmenityType[];
@@ -2296,8 +2291,14 @@ export namespace Prisma {
      * @returns A Promise for the completion of which ever callback is executed.
      */
     then<TResult1 = T, TResult2 = never>(
-      onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-      onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+      onfulfilled?:
+        | ((value: T) => TResult1 | PromiseLike<TResult1>)
+        | undefined
+        | null,
+      onrejected?:
+        | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+        | undefined
+        | null,
     ): $Utils.JsPromise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
@@ -2305,7 +2306,10 @@ export namespace Prisma {
      * @returns A Promise for the completion of the callback.
      */
     catch<TResult = never>(
-      onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
+      onrejected?:
+        | ((reason: any) => TResult | PromiseLike<TResult>)
+        | undefined
+        | null,
     ): $Utils.JsPromise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
@@ -2313,7 +2317,7 @@ export namespace Prisma {
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
   }
 
   /**
@@ -2322,16 +2326,15 @@ export namespace Prisma {
   interface PropertyFieldRefs {
     readonly id: FieldRef<"Property", "String">;
     readonly title: FieldRef<"Property", "String">;
-    readonly description: FieldRef<"Property", "String">;
     readonly propertyType: FieldRef<"Property", "PropertyType">;
     readonly rent: FieldRef<"Property", "Int">;
     readonly deposit: FieldRef<"Property", "Int">;
     readonly maintenance: FieldRef<"Property", "Int">;
-    readonly isAvailable: FieldRef<"Property", "Boolean">;
     readonly sharing: FieldRef<"Property", "Int">;
+    readonly isAvailable: FieldRef<"Property", "Boolean">;
     readonly genderPreference: FieldRef<"Property", "Gender">;
     readonly bhk: FieldRef<"Property", "BHK">;
-    readonly suitableFitFor: FieldRef<"Property", "String">;
+    readonly suitableFitFor: FieldRef<"Property", "String[]">;
     readonly addressLine1: FieldRef<"Property", "String">;
     readonly addressLine2: FieldRef<"Property", "String">;
     readonly locality: FieldRef<"Property", "String">;
@@ -2347,6 +2350,7 @@ export namespace Prisma {
     readonly ownerId: FieldRef<"Property", "String">;
     readonly ownerPhone: FieldRef<"Property", "String">;
     readonly visitingHrs: FieldRef<"Property", "String">;
+    readonly availableFrom: FieldRef<"Property", "DateTime">;
     readonly ownershipProof: FieldRef<"Property", "String">;
     readonly verifiedAt: FieldRef<"Property", "DateTime">;
     readonly amenities: FieldRef<"Property", "AmenityType[]">;
@@ -3501,8 +3505,14 @@ export namespace Prisma {
      * @returns A Promise for the completion of which ever callback is executed.
      */
     then<TResult1 = T, TResult2 = never>(
-      onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-      onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+      onfulfilled?:
+        | ((value: T) => TResult1 | PromiseLike<TResult1>)
+        | undefined
+        | null,
+      onrejected?:
+        | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+        | undefined
+        | null,
     ): $Utils.JsPromise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
@@ -3510,7 +3520,10 @@ export namespace Prisma {
      * @returns A Promise for the completion of the callback.
      */
     catch<TResult = never>(
-      onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
+      onrejected?:
+        | ((reason: any) => TResult | PromiseLike<TResult>)
+        | undefined
+        | null,
     ): $Utils.JsPromise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
@@ -3518,7 +3531,7 @@ export namespace Prisma {
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
   }
 
   /**
@@ -4597,8 +4610,14 @@ export namespace Prisma {
      * @returns A Promise for the completion of which ever callback is executed.
      */
     then<TResult1 = T, TResult2 = never>(
-      onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-      onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
+      onfulfilled?:
+        | ((value: T) => TResult1 | PromiseLike<TResult1>)
+        | undefined
+        | null,
+      onrejected?:
+        | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+        | undefined
+        | null,
     ): $Utils.JsPromise<TResult1 | TResult2>;
     /**
      * Attaches a callback for only the rejection of the Promise.
@@ -4606,7 +4625,10 @@ export namespace Prisma {
      * @returns A Promise for the completion of the callback.
      */
     catch<TResult = never>(
-      onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
+      onrejected?:
+        | ((reason: any) => TResult | PromiseLike<TResult>)
+        | undefined
+        | null,
     ): $Utils.JsPromise<T | TResult>;
     /**
      * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
@@ -4614,7 +4636,7 @@ export namespace Prisma {
      * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
      * @returns A Promise for the completion of the callback.
      */
-    finally(onfinally?: (() => void) | null): $Utils.JsPromise<T>;
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>;
   }
 
   /**
@@ -5009,13 +5031,12 @@ export namespace Prisma {
   export const PropertyScalarFieldEnum: {
     id: "id";
     title: "title";
-    description: "description";
     propertyType: "propertyType";
     rent: "rent";
     deposit: "deposit";
     maintenance: "maintenance";
-    isAvailable: "isAvailable";
     sharing: "sharing";
+    isAvailable: "isAvailable";
     genderPreference: "genderPreference";
     bhk: "bhk";
     suitableFitFor: "suitableFitFor";
@@ -5034,6 +5055,7 @@ export namespace Prisma {
     ownerId: "ownerId";
     ownerPhone: "ownerPhone";
     visitingHrs: "visitingHrs";
+    availableFrom: "availableFrom";
     ownershipProof: "ownershipProof";
     verifiedAt: "verifiedAt";
     amenities: "amenities";
@@ -5287,16 +5309,15 @@ export namespace Prisma {
     NOT?: PropertyWhereInput | PropertyWhereInput[];
     id?: StringFilter<"Property"> | string;
     title?: StringFilter<"Property"> | string;
-    description?: StringFilter<"Property"> | string;
     propertyType?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType;
     rent?: IntFilter<"Property"> | number;
     deposit?: IntFilter<"Property"> | number;
     maintenance?: IntFilter<"Property"> | number;
-    isAvailable?: BoolFilter<"Property"> | boolean;
     sharing?: IntFilter<"Property"> | number;
+    isAvailable?: BoolFilter<"Property"> | boolean;
     genderPreference?: EnumGenderFilter<"Property"> | $Enums.Gender;
     bhk?: EnumBHKFilter<"Property"> | $Enums.BHK;
-    suitableFitFor?: StringNullableFilter<"Property"> | string | null;
+    suitableFitFor?: StringNullableListFilter<"Property">;
     addressLine1?: StringFilter<"Property"> | string;
     addressLine2?: StringNullableFilter<"Property"> | string | null;
     locality?: StringFilter<"Property"> | string;
@@ -5322,6 +5343,7 @@ export namespace Prisma {
     ownerId?: StringFilter<"Property"> | string;
     ownerPhone?: StringFilter<"Property"> | string;
     visitingHrs?: StringNullableFilter<"Property"> | string | null;
+    availableFrom?: DateTimeNullableFilter<"Property"> | Date | string | null;
     ownershipProof?: StringNullableFilter<"Property"> | string | null;
     verifiedAt?: DateTimeNullableFilter<"Property"> | Date | string | null;
     amenities?: EnumAmenityTypeNullableListFilter<"Property">;
@@ -5342,16 +5364,15 @@ export namespace Prisma {
   export type PropertyOrderByWithRelationInput = {
     id?: SortOrder;
     title?: SortOrder;
-    description?: SortOrder;
     propertyType?: SortOrder;
     rent?: SortOrder;
     deposit?: SortOrder;
     maintenance?: SortOrder;
-    isAvailable?: SortOrder;
     sharing?: SortOrder;
+    isAvailable?: SortOrder;
     genderPreference?: SortOrder;
     bhk?: SortOrder;
-    suitableFitFor?: SortOrderInput | SortOrder;
+    suitableFitFor?: SortOrder;
     addressLine1?: SortOrder;
     addressLine2?: SortOrderInput | SortOrder;
     locality?: SortOrder;
@@ -5367,6 +5388,7 @@ export namespace Prisma {
     ownerId?: SortOrder;
     ownerPhone?: SortOrder;
     visitingHrs?: SortOrderInput | SortOrder;
+    availableFrom?: SortOrderInput | SortOrder;
     ownershipProof?: SortOrderInput | SortOrder;
     verifiedAt?: SortOrderInput | SortOrder;
     amenities?: SortOrder;
@@ -5387,16 +5409,15 @@ export namespace Prisma {
       OR?: PropertyWhereInput[];
       NOT?: PropertyWhereInput | PropertyWhereInput[];
       title?: StringFilter<"Property"> | string;
-      description?: StringFilter<"Property"> | string;
       propertyType?: EnumPropertyTypeFilter<"Property"> | $Enums.PropertyType;
       rent?: IntFilter<"Property"> | number;
       deposit?: IntFilter<"Property"> | number;
       maintenance?: IntFilter<"Property"> | number;
-      isAvailable?: BoolFilter<"Property"> | boolean;
       sharing?: IntFilter<"Property"> | number;
+      isAvailable?: BoolFilter<"Property"> | boolean;
       genderPreference?: EnumGenderFilter<"Property"> | $Enums.Gender;
       bhk?: EnumBHKFilter<"Property"> | $Enums.BHK;
-      suitableFitFor?: StringNullableFilter<"Property"> | string | null;
+      suitableFitFor?: StringNullableListFilter<"Property">;
       addressLine1?: StringFilter<"Property"> | string;
       addressLine2?: StringNullableFilter<"Property"> | string | null;
       locality?: StringFilter<"Property"> | string;
@@ -5421,6 +5442,7 @@ export namespace Prisma {
       ownerId?: StringFilter<"Property"> | string;
       ownerPhone?: StringFilter<"Property"> | string;
       visitingHrs?: StringNullableFilter<"Property"> | string | null;
+      availableFrom?: DateTimeNullableFilter<"Property"> | Date | string | null;
       ownershipProof?: StringNullableFilter<"Property"> | string | null;
       verifiedAt?: DateTimeNullableFilter<"Property"> | Date | string | null;
       amenities?: EnumAmenityTypeNullableListFilter<"Property">;
@@ -5443,16 +5465,15 @@ export namespace Prisma {
   export type PropertyOrderByWithAggregationInput = {
     id?: SortOrder;
     title?: SortOrder;
-    description?: SortOrder;
     propertyType?: SortOrder;
     rent?: SortOrder;
     deposit?: SortOrder;
     maintenance?: SortOrder;
-    isAvailable?: SortOrder;
     sharing?: SortOrder;
+    isAvailable?: SortOrder;
     genderPreference?: SortOrder;
     bhk?: SortOrder;
-    suitableFitFor?: SortOrderInput | SortOrder;
+    suitableFitFor?: SortOrder;
     addressLine1?: SortOrder;
     addressLine2?: SortOrderInput | SortOrder;
     locality?: SortOrder;
@@ -5468,6 +5489,7 @@ export namespace Prisma {
     ownerId?: SortOrder;
     ownerPhone?: SortOrder;
     visitingHrs?: SortOrderInput | SortOrder;
+    availableFrom?: SortOrderInput | SortOrder;
     ownershipProof?: SortOrderInput | SortOrder;
     verifiedAt?: SortOrderInput | SortOrder;
     amenities?: SortOrder;
@@ -5493,23 +5515,19 @@ export namespace Prisma {
       | PropertyScalarWhereWithAggregatesInput[];
     id?: StringWithAggregatesFilter<"Property"> | string;
     title?: StringWithAggregatesFilter<"Property"> | string;
-    description?: StringWithAggregatesFilter<"Property"> | string;
     propertyType?:
       | EnumPropertyTypeWithAggregatesFilter<"Property">
       | $Enums.PropertyType;
     rent?: IntWithAggregatesFilter<"Property"> | number;
     deposit?: IntWithAggregatesFilter<"Property"> | number;
     maintenance?: IntWithAggregatesFilter<"Property"> | number;
-    isAvailable?: BoolWithAggregatesFilter<"Property"> | boolean;
     sharing?: IntWithAggregatesFilter<"Property"> | number;
+    isAvailable?: BoolWithAggregatesFilter<"Property"> | boolean;
     genderPreference?:
       | EnumGenderWithAggregatesFilter<"Property">
       | $Enums.Gender;
     bhk?: EnumBHKWithAggregatesFilter<"Property"> | $Enums.BHK;
-    suitableFitFor?:
-      | StringNullableWithAggregatesFilter<"Property">
-      | string
-      | null;
+    suitableFitFor?: StringNullableListFilter<"Property">;
     addressLine1?: StringWithAggregatesFilter<"Property"> | string;
     addressLine2?:
       | StringNullableWithAggregatesFilter<"Property">
@@ -5542,6 +5560,11 @@ export namespace Prisma {
     ownerPhone?: StringWithAggregatesFilter<"Property"> | string;
     visitingHrs?:
       | StringNullableWithAggregatesFilter<"Property">
+      | string
+      | null;
+    availableFrom?:
+      | DateTimeNullableWithAggregatesFilter<"Property">
+      | Date
       | string
       | null;
     ownershipProof?:
@@ -5683,16 +5706,15 @@ export namespace Prisma {
   export type PropertyCreateInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -5708,6 +5730,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -5723,16 +5746,15 @@ export namespace Prisma {
   export type PropertyUncheckedCreateInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -5748,6 +5770,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -5763,18 +5786,17 @@ export namespace Prisma {
   export type PropertyUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -5800,6 +5822,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -5821,18 +5848,17 @@ export namespace Prisma {
   export type PropertyUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -5858,6 +5884,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -5879,16 +5910,15 @@ export namespace Prisma {
   export type PropertyCreateManyInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -5904,6 +5934,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -5917,18 +5948,17 @@ export namespace Prisma {
   export type PropertyUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -5954,6 +5984,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -5973,18 +6008,17 @@ export namespace Prisma {
   export type PropertyUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -6010,6 +6044,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -6178,6 +6217,14 @@ export namespace Prisma {
     not?: NestedEnumBHKFilter<$PrismaModel> | $Enums.BHK;
   };
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null;
+    has?: string | StringFieldRefInput<$PrismaModel> | null;
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>;
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>;
+    isEmpty?: boolean;
+  };
+
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null;
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null;
@@ -6306,14 +6353,6 @@ export namespace Prisma {
       | JsonNullValueFilter;
   };
 
-  export type StringNullableListFilter<$PrismaModel = never> = {
-    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null;
-    has?: string | StringFieldRefInput<$PrismaModel> | null;
-    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>;
-    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>;
-    isEmpty?: boolean;
-  };
-
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>;
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>;
@@ -6363,13 +6402,12 @@ export namespace Prisma {
   export type PropertyCountOrderByAggregateInput = {
     id?: SortOrder;
     title?: SortOrder;
-    description?: SortOrder;
     propertyType?: SortOrder;
     rent?: SortOrder;
     deposit?: SortOrder;
     maintenance?: SortOrder;
-    isAvailable?: SortOrder;
     sharing?: SortOrder;
+    isAvailable?: SortOrder;
     genderPreference?: SortOrder;
     bhk?: SortOrder;
     suitableFitFor?: SortOrder;
@@ -6388,6 +6426,7 @@ export namespace Prisma {
     ownerId?: SortOrder;
     ownerPhone?: SortOrder;
     visitingHrs?: SortOrder;
+    availableFrom?: SortOrder;
     ownershipProof?: SortOrder;
     verifiedAt?: SortOrder;
     amenities?: SortOrder;
@@ -6410,16 +6449,14 @@ export namespace Prisma {
   export type PropertyMaxOrderByAggregateInput = {
     id?: SortOrder;
     title?: SortOrder;
-    description?: SortOrder;
     propertyType?: SortOrder;
     rent?: SortOrder;
     deposit?: SortOrder;
     maintenance?: SortOrder;
-    isAvailable?: SortOrder;
     sharing?: SortOrder;
+    isAvailable?: SortOrder;
     genderPreference?: SortOrder;
     bhk?: SortOrder;
-    suitableFitFor?: SortOrder;
     addressLine1?: SortOrder;
     addressLine2?: SortOrder;
     locality?: SortOrder;
@@ -6435,6 +6472,7 @@ export namespace Prisma {
     ownerId?: SortOrder;
     ownerPhone?: SortOrder;
     visitingHrs?: SortOrder;
+    availableFrom?: SortOrder;
     ownershipProof?: SortOrder;
     verifiedAt?: SortOrder;
     createdAt?: SortOrder;
@@ -6445,16 +6483,14 @@ export namespace Prisma {
   export type PropertyMinOrderByAggregateInput = {
     id?: SortOrder;
     title?: SortOrder;
-    description?: SortOrder;
     propertyType?: SortOrder;
     rent?: SortOrder;
     deposit?: SortOrder;
     maintenance?: SortOrder;
-    isAvailable?: SortOrder;
     sharing?: SortOrder;
+    isAvailable?: SortOrder;
     genderPreference?: SortOrder;
     bhk?: SortOrder;
-    suitableFitFor?: SortOrder;
     addressLine1?: SortOrder;
     addressLine2?: SortOrder;
     locality?: SortOrder;
@@ -6470,6 +6506,7 @@ export namespace Prisma {
     ownerId?: SortOrder;
     ownerPhone?: SortOrder;
     visitingHrs?: SortOrder;
+    availableFrom?: SortOrder;
     ownershipProof?: SortOrder;
     verifiedAt?: SortOrder;
     createdAt?: SortOrder;
@@ -6797,6 +6834,10 @@ export namespace Prisma {
     savedAt?: SortOrder;
   };
 
+  export type PropertyCreatesuitableFitForInput = {
+    set: string[];
+  };
+
   export type PropertyCreateamenitiesInput = {
     set: $Enums.AmenityType[];
   };
@@ -6879,6 +6920,11 @@ export namespace Prisma {
 
   export type EnumBHKFieldUpdateOperationsInput = {
     set?: $Enums.BHK;
+  };
+
+  export type PropertyUpdatesuitableFitForInput = {
+    set?: string[];
+    push?: string | string[];
   };
 
   export type NullableStringFieldUpdateOperationsInput = {
@@ -7618,16 +7664,15 @@ export namespace Prisma {
   export type PropertyCreateWithoutPropertyStatsInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -7643,6 +7688,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -7657,16 +7703,15 @@ export namespace Prisma {
   export type PropertyUncheckedCreateWithoutPropertyStatsInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -7682,6 +7727,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -7724,18 +7770,17 @@ export namespace Prisma {
   export type PropertyUpdateWithoutPropertyStatsInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -7761,6 +7806,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -7781,18 +7831,17 @@ export namespace Prisma {
   export type PropertyUncheckedUpdateWithoutPropertyStatsInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -7818,6 +7867,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -7838,16 +7892,15 @@ export namespace Prisma {
   export type PropertyCreateWithoutSavedPropertyInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -7863,6 +7916,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -7877,16 +7931,15 @@ export namespace Prisma {
   export type PropertyUncheckedCreateWithoutSavedPropertyInput = {
     id?: string;
     title: string;
-    description: string;
     propertyType: $Enums.PropertyType;
     rent: number;
     deposit: number;
     maintenance: number;
-    isAvailable?: boolean;
     sharing: number;
+    isAvailable?: boolean;
     genderPreference: $Enums.Gender;
     bhk: $Enums.BHK;
-    suitableFitFor?: string | null;
+    suitableFitFor?: PropertyCreatesuitableFitForInput | string[];
     addressLine1: string;
     addressLine2?: string | null;
     locality: string;
@@ -7902,6 +7955,7 @@ export namespace Prisma {
     ownerId: string;
     ownerPhone: string;
     visitingHrs?: string | null;
+    availableFrom?: Date | string | null;
     ownershipProof?: string | null;
     verifiedAt?: Date | string | null;
     amenities?: PropertyCreateamenitiesInput | $Enums.AmenityType[];
@@ -7944,18 +7998,17 @@ export namespace Prisma {
   export type PropertyUpdateWithoutSavedPropertyInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -7981,6 +8034,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput
@@ -8001,18 +8059,17 @@ export namespace Prisma {
   export type PropertyUncheckedUpdateWithoutSavedPropertyInput = {
     id?: StringFieldUpdateOperationsInput | string;
     title?: StringFieldUpdateOperationsInput | string;
-    description?: StringFieldUpdateOperationsInput | string;
     propertyType?:
       | EnumPropertyTypeFieldUpdateOperationsInput
       | $Enums.PropertyType;
     rent?: IntFieldUpdateOperationsInput | number;
     deposit?: IntFieldUpdateOperationsInput | number;
     maintenance?: IntFieldUpdateOperationsInput | number;
-    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     sharing?: IntFieldUpdateOperationsInput | number;
+    isAvailable?: BoolFieldUpdateOperationsInput | boolean;
     genderPreference?: EnumGenderFieldUpdateOperationsInput | $Enums.Gender;
     bhk?: EnumBHKFieldUpdateOperationsInput | $Enums.BHK;
-    suitableFitFor?: NullableStringFieldUpdateOperationsInput | string | null;
+    suitableFitFor?: PropertyUpdatesuitableFitForInput | string[];
     addressLine1?: StringFieldUpdateOperationsInput | string;
     addressLine2?: NullableStringFieldUpdateOperationsInput | string | null;
     locality?: StringFieldUpdateOperationsInput | string;
@@ -8038,6 +8095,11 @@ export namespace Prisma {
     ownerId?: StringFieldUpdateOperationsInput | string;
     ownerPhone?: StringFieldUpdateOperationsInput | string;
     visitingHrs?: NullableStringFieldUpdateOperationsInput | string | null;
+    availableFrom?:
+      | NullableDateTimeFieldUpdateOperationsInput
+      | Date
+      | string
+      | null;
     ownershipProof?: NullableStringFieldUpdateOperationsInput | string | null;
     verifiedAt?:
       | NullableDateTimeFieldUpdateOperationsInput

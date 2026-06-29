@@ -15,21 +15,63 @@ export class NotificationConsumer {
 
   @MessagePattern('user.created')
   async handleUserCreated(@Payload() data: UserCreatedEvent): Promise<void> {
-    await this.notificationService.createWelcomeNotification(data.userId, data.name);
+    await this.notificationService.createWelcomeNotification(
+      data.userId,
+      data.name,
+    );
   }
 
   @MessagePattern('property.created')
   async handlePropertyCreated(@Payload() data: PropertyEvent): Promise<void> {
-    await this.notificationService.createPropertyCreatedNotification(data.ownerId, data.propertyId);
+    await this.notificationService.createPropertyCreatedNotification(
+      data.ownerId,
+      data.propertyId,
+    );
   }
 
   @MessagePattern('property.approved')
   async handlePropertyApproved(@Payload() data: PropertyEvent): Promise<void> {
-    await this.notificationService.createPropertyApprovedNotification(data.ownerId, data.propertyId);
+    await this.notificationService.createPropertyApprovedNotification(
+      data.ownerId,
+      data.propertyId,
+    );
   }
 
   @MessagePattern('property.rejected')
   async handlePropertyRejected(@Payload() data: PropertyEvent): Promise<void> {
-    await this.notificationService.createPropertyRejectedNotification(data.ownerId, data.propertyId);
+    await this.notificationService.createPropertyRejectedNotification(
+      data.ownerId,
+      data.propertyId,
+    );
+  }
+
+  @MessagePattern('community.requested')
+  async handleCommunityRequested(
+    @Payload() data: { requestedById: string; communityName: string },
+  ): Promise<void> {
+    await this.notificationService.createCommunityRequestedNotification(
+      data.requestedById,
+      data.communityName,
+    );
+  }
+
+  @MessagePattern('community.approved')
+  async handleCommunityApproved(
+    @Payload() data: { requestedById: string; communityName: string },
+  ): Promise<void> {
+    await this.notificationService.createCommunityApprovedNotification(
+      data.requestedById,
+      data.communityName,
+    );
+  }
+
+  @MessagePattern('community.rejected')
+  async handleCommunityRejected(
+    @Payload() data: { requestedById: string; communityName: string },
+  ): Promise<void> {
+    await this.notificationService.createCommunityRejectedNotification(
+      data.requestedById,
+      data.communityName,
+    );
   }
 }

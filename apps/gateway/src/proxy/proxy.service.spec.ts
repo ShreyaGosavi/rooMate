@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { AxiosError } from 'axios';
 import { of, throwError } from 'rxjs';
 import type { Request } from 'express';
@@ -10,6 +11,7 @@ describe('ProxyService', () => {
   let service: ProxyService;
   let mockHttpService: { request: jest.Mock };
   let mockConfigService: { get: jest.Mock };
+  let mockJwtService: { verify: jest.Mock };
 
   beforeEach(async () => {
     mockHttpService = { request: jest.fn() };
@@ -26,19 +28,29 @@ describe('ProxyService', () => {
         return config[key];
       }),
     };
+    mockJwtService = {
+      verify: jest.fn().mockReturnValue({
+        sub: 'user-1',
+        email: 'test@test.com',
+        isAdmin: false,
+      }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProxyService,
         { provide: HttpService, useValue: mockHttpService },
         { provide: ConfigService, useValue: mockConfigService },
+        { provide: JwtService, useValue: mockJwtService },
       ],
     }).compile();
 
     service = module.get<ProxyService>(ProxyService);
   });
 
-  afterEach(() => { jest.clearAllMocks(); });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   const mockRequest = (url: string, method = 'GET') =>
     ({
@@ -57,15 +69,25 @@ describe('ProxyService', () => {
       mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
       await service.forward(mockRequest('/api/auth/login', 'POST'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
-        expect.objectContaining({ url: 'http://localhost:3001/api/auth/login' }),
+        expect.objectContaining({
+          url: 'http://localhost:3001/api/auth/login',
+        }),
       );
     });
 
     it('should forward to Notification service', async () => {
       mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
-      await service.forward(mockRequest('/api/notifications'));
+      await service.forward({
+        ...mockRequest('/api/notifications'),
+        headers: {
+          'content-type': 'application/json',
+          authorization: 'Bearer valid.token.here',
+        },
+      } as any);
       expect(mockHttpService.request).toHaveBeenCalledWith(
-        expect.objectContaining({ url: 'http://localhost:3008/api/notifications' }),
+        expect.objectContaining({
+          url: 'http://localhost:3008/api/notifications',
+        }),
       );
     });
 
@@ -81,7 +103,9 @@ describe('ProxyService', () => {
       mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
       await service.forward(mockRequest('/api/communities'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
-        expect.objectContaining({ url: 'http://localhost:3004/api/communities' }),
+        expect.objectContaining({
+          url: 'http://localhost:3004/api/communities',
+        }),
       );
     });
 
@@ -89,15 +113,25 @@ describe('ProxyService', () => {
       mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
       await service.forward(mockRequest('/api/admin/properties'));
       expect(mockHttpService.request).toHaveBeenCalledWith(
-        expect.objectContaining({ url: 'http://localhost:3005/api/admin/properties' }),
+        expect.objectContaining({
+          url: 'http://localhost:3005/api/admin/properties',
+        }),
       );
     });
 
     it('should forward to Chat service', async () => {
       mockHttpService.request.mockReturnValue(of({ status: 200, data: {} }));
-      await service.forward(mockRequest('/api/conversations'));
+      await service.forward({
+        ...mockRequest('/api/conversations'),
+        headers: {
+          'content-type': 'application/json',
+          authorization: 'Bearer valid.token.here',
+        },
+      } as any);
       expect(mockHttpService.request).toHaveBeenCalledWith(
-        expect.objectContaining({ url: 'http://localhost:3006/api/conversations' }),
+        expect.objectContaining({
+          url: 'http://localhost:3006/api/conversations',
+        }),
       );
     });
 
@@ -112,14 +146,23 @@ describe('ProxyService', () => {
       };
       mockHttpService.request.mockReturnValue(throwError(() => axiosError));
       const result = await service.forward(mockRequest('/api/auth/me'));
-      expect(result).toEqual({ status: 401, data: { message: 'Unauthorized' } });
+      expect(result).toEqual({
+        status: 401,
+        data: { message: 'Unauthorized' },
+      });
     });
 
     it('should return 503 when service unreachable', async () => {
       const axiosError = new AxiosError('Connection refused');
       mockHttpService.request.mockReturnValue(throwError(() => axiosError));
-      const result = await service.forward(mockRequest('/api/auth/login', 'POST'));
-      expect(result).toEqual({ status: 503, data: { message: 'Service unavailable' } });
+      const result = await service.forward({
+        ...mockRequest('/api/auth/login', 'POST'),
+        headers: { 'content-type': 'application/json' },
+      } as any);
+      expect(result).toEqual({
+        status: 503,
+        data: expect.objectContaining({ message: 'Service unavailable' }),
+      });
     });
   });
 });

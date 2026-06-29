@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document } from "mongoose";
 
 export type ConversationDocument = Conversation & Document;
 
@@ -19,4 +19,7 @@ export class Conversation {
 }
 
 export const ConversationSchema = SchemaFactory.createForClass(Conversation);
-ConversationSchema.index({ participant1Id: 1, participant2Id: 1 }, { unique: true });
+ConversationSchema.index(
+  { participant1Id: 1, participant2Id: 1 },
+  { unique: true },
+);

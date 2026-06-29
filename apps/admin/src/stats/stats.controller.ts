@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards, Request } from "@nestjs/common";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 import { AdminGuard } from "../auth/admin.guard";
 import { AdminHttpService } from "../admin.http.service";
 
@@ -12,7 +12,7 @@ function extractToken(req: {
 }
 
 @Controller("admin/stats")
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(GatewayGuard, AdminGuard)
 export class StatsController {
   private readonly listingUrl =
     process.env.LISTING_SERVICE_URL ?? "http://localhost:3003";

@@ -7,20 +7,26 @@ import {
   UseGuards,
   Request,
 } from "@nestjs/common";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 import { AdminGuard } from "../auth/admin.guard";
 import { AdminHttpService } from "../admin.http.service";
 
-function extractToken(req: {
-  headers: Record<string, string | string[] | undefined>;
-}): string {
+function extractToken(req: any): string {
   const auth = req.headers["authorization"];
   if (typeof auth === "string") return auth.replace("Bearer ", "");
   return "";
 }
 
+function extractUserHeaders(req: any): Record<string, string> {
+  return {
+    "x-user-id": req.user?.id ?? "",
+    "x-user-email": req.user?.email ?? "",
+    "x-user-is-admin": "true",
+  };
+}
+
 @Controller("admin/communities")
-@UseGuards(JwtAuthGuard, AdminGuard)
+@UseGuards(GatewayGuard, AdminGuard)
 export class CommunityController {
   private readonly communityUrl =
     process.env.COMMUNITY_SERVICE_URL ?? "http://localhost:3004";
@@ -30,8 +36,10 @@ export class CommunityController {
   @Get("requests")
   getCommunityRequests(@Request() req: any) {
     return this.http.get(
-      `${this.communityUrl}/api/communities/my/requests`,
+      `${this.communityUrl}/api/communities/admin/requests`,
       extractToken(req),
+      undefined,
+      extractUserHeaders(req),
     );
   }
 
@@ -45,6 +53,7 @@ export class CommunityController {
       `${this.communityUrl}/api/communities/requests/${id}/status`,
       extractToken(req),
       body,
+      extractUserHeaders(req),
     );
   }
 }

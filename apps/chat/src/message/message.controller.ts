@@ -8,10 +8,10 @@ import {
   Request,
 } from "@nestjs/common";
 import { MessageService } from "./message.service";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { GatewayGuard } from "../auth/gateway.guard";
 
 @Controller("conversations/:id/messages")
-@UseGuards(JwtAuthGuard)
+@UseGuards(GatewayGuard)
 export class MessageController {
   constructor(private readonly messageService: MessageService) {}
 

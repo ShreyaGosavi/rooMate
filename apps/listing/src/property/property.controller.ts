@@ -14,7 +14,8 @@ import {
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { PropertyService } from "./property.service";
-import { JwtAuthGuard } from "../auth/jwt.guard";
+import { UploadService } from "../upload/upload.service";
+import { GatewayGuard } from "../auth/gateway.guard";
 import {
   UpdatePropertyDto,
   FilterPropertiesDto,
@@ -24,10 +25,13 @@ import { PropertyVerificationStatus } from "../prisma/generated";
 
 @Controller("listings")
 export class PropertyController {
-  constructor(private readonly propertyService: PropertyService) {}
+  constructor(
+    private readonly propertyService: PropertyService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: "photos", maxCount: 10 },
@@ -59,11 +63,15 @@ export class PropertyController {
   }
 
   @Get("my")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   findMyListings(@Request() req: any) {
     return this.propertyService.findMyListings(req.user.id);
   }
 
+  @Get("admin/pending")
+  findPending() {
+    return this.propertyService.findPending();
+  }
   @Get(":id")
   findById(@Param("id") id: string) {
     return this.propertyService.findById(id);
@@ -75,7 +83,7 @@ export class PropertyController {
   }
 
   @Patch(":id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   update(
     @Param("id") id: string,
     @Request() req: any,
@@ -85,13 +93,13 @@ export class PropertyController {
   }
 
   @Delete(":id")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   remove(@Param("id") id: string, @Request() req: any) {
     return this.propertyService.remove(id, req.user.id);
   }
 
   @Patch(":id/verify")
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(GatewayGuard)
   verify(
     @Param("id") id: string,
     @Body() body: { status: PropertyVerificationStatus; ownerEmail: string },
@@ -101,5 +109,15 @@ export class PropertyController {
       body.status,
       body.ownerEmail,
     );
+  }
+  @Get(":id/proof-url")
+  @UseGuards(GatewayGuard)
+  async getProofUrl(@Param("id") id: string) {
+    const property = await this.propertyService.findById(id);
+    if (!property?.ownershipProof) return { url: null };
+    const url = await this.uploadService.getSignedProofUrl(
+      property.ownershipProof,
+    );
+    return { url };
   }
 }

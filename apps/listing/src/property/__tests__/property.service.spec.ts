@@ -46,8 +46,7 @@ const mockKafka = {
 const mockProperty = {
   id: "prop-1",
   title: "Test PG",
-  description: "Nice PG",
-  propertyType: PropertyType.PG,
+  propertyType: PropertyType.PG_HOSTEL,
   rent: 10000,
   deposit: 20000,
   maintenance: 500,
@@ -66,6 +65,7 @@ const mockProperty = {
   ownerId: "user-1",
   ownerPhone: "9999999999",
   images: [],
+  suitableFitFor: [],
   amenities: [],
   verificationStatus: PropertyVerificationStatus.VERIFIED,
   isAvailable: true,
@@ -96,8 +96,7 @@ describe("PropertyService", () => {
 
       const dto = {
         title: "Test PG",
-        description: "Nice PG",
-        propertyType: PropertyType.PG,
+        propertyType: PropertyType.PG_HOSTEL,
         rent: 10000,
         deposit: 20000,
         maintenance: 500,
@@ -114,6 +113,7 @@ describe("PropertyService", () => {
         latitude: 18.5074,
         longitude: 73.8077,
         ownerPhone: "9999999999",
+        suitableFitFor: [],
         amenities: [],
       };
 
@@ -165,7 +165,7 @@ describe("PropertyService", () => {
         expect.objectContaining({
           where: expect.objectContaining({
             city: "Pune",
-            propertyType: PropertyType.PG,
+            propertyType: PropertyType.PG_HOSTEL,
             rent: { gte: 7000, lte: 13000 },
           }),
         }),

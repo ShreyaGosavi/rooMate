@@ -6,7 +6,7 @@ export function propertyRejectedTemplate(ownerEmail: string): {
 } {
   return {
     to: ownerEmail,
-    from: { name: 'RooMate', email: 'noreply@roomate.in' },
+    from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
     subject: 'Update on your property listing',
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">

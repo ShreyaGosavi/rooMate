@@ -6,7 +6,7 @@ export function propertySubmittedTemplate(ownerEmail: string): {
 } {
   return {
     to: ownerEmail,
-    from: { name: 'RooMate', email: 'noreply@roomate.in' },
+    from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
     subject: 'Your property listing has been received!',
     html: `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
