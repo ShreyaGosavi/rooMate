@@ -1,4 +1,5 @@
 import { AllExceptionsFilter } from '@roomate/shared-types';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
@@ -37,6 +38,15 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
   app.useGlobalFilters(new AllExceptionsFilter());
+
+  const config = new DocumentBuilder()
+    .setTitle('API Gateway')
+    .setDescription('Main entry point for all services')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
   await app.listen(process.env.PORT ?? 3007);
 }
 
