@@ -7,9 +7,11 @@ import { PropertyController } from "./property/property.controller";
 import { CommunityController } from "./community/community.controller";
 import { StatsController } from "./stats/stats.controller";
 
+import { HealthController } from './health.controller';
+
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), HttpModule, AuthModule],
-  controllers: [PropertyController, CommunityController, StatsController],
+  controllers: [HealthController, PropertyController, CommunityController, StatsController],
   providers: [AdminHttpService],
 })
 export class AppModule {}

@@ -5,7 +5,10 @@ import { KafkaModule } from "./kafka/kafka.module";
 import { CommunityModule } from "./community/community.module";
 import { NoticeModule } from "./notice/notice.module";
 
+import { HealthController } from './health.controller';
+
 @Module({
+  controllers: [HealthController],
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
