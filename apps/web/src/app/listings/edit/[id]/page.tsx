@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
@@ -126,25 +127,7 @@ export default function EditListingPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-6">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={110}
-              height={28}
-              priority
-            />
-          </Link>
-          <Link
-            href="/listings/my"
-            className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-          >
-            ← My Listings
-          </Link>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="mx-auto max-w-3xl px-6 py-8">
         <h1 className="text-2xl font-bold text-[#061b32] mb-1">Edit Listing</h1>

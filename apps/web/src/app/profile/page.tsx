@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import Navbar from "@/components/layout/navbar";
 import api from "@/lib/api";
 import { isLoggedIn, clearTokens } from "@/lib/auth";
 import { useSearchParams } from "next/navigation";
@@ -65,7 +66,7 @@ export default function ProfilePage() {
         const commData = commRes.value.data || [];
         setCommunities(
           Array.isArray(commData)
-            ? commData.map((c: any) => c.community || c)
+            ? commData.map((c: any) => ({ ...(c.community || c), memberCount: c.community?._count?.members ?? c._count?.members ?? 0 }))
             : [],
         );
       }
@@ -125,13 +126,7 @@ export default function ProfilePage() {
     REJECTED: { label: "Rejected", bg: "bg-red-50", text: "text-red-600" },
   };
 
-  const initials =
-    user?.name
-      ?.split(" ")
-      .map((n: string) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2) || "U";
+  const initials = user?.username?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || 'U';
 
   const PropertyCard = ({
     p,
@@ -269,40 +264,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="flex h-16 items-center justify-between px-8">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={110}
-              height={28}
-              priority
-            />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/listings"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-            >
-              Browse
-            </Link>
-            <Link
-              href="/notifications"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-            >
-              Notifications
-            </Link>
-            <Link
-              href="/listings/create"
-              className="rounded-xl bg-[#061b32] px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
-            >
-              + List Property
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex flex-col md:flex-row min-h-[calc(100vh-64px)]">
         {/* Left sidebar — user card */}
@@ -321,7 +283,7 @@ export default function ProfilePage() {
                   {initials}
                 </div>
                 <h2 className="font-bold text-[#061b32] text-lg">
-                  {user?.name || "User"}
+                  {user?.username || user?.email?.split("@")[0] || "User"}
                 </h2>
                 <p className="text-xs text-[#061b32]/50 mt-0.5">
                   {user?.email}

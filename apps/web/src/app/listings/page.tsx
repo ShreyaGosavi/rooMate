@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -267,72 +268,7 @@ export default function BrowseListingsPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={120}
-              height={32}
-              priority
-            />
-          </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link
-              href="/"
-              className="text-sm font-medium text-[#061b32]/60 hover:text-[#061b32]"
-            >
-              Home
-            </Link>
-            <Link
-              href="/listings"
-              className="text-sm font-medium text-[#9fdbda] border-b-2 border-[#9fdbda] pb-0.5"
-            >
-              Find Rooms
-            </Link>
-            <Link
-              href="/conversations"
-              className="text-sm font-medium text-[#061b32]/60 hover:text-[#061b32]"
-            >
-              Messages
-            </Link>
-            <Link
-              href="/saved"
-              className="text-sm font-medium text-[#061b32]/60 hover:text-[#061b32]"
-            >
-              Saved
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link
-              href="/listings/create"
-              className="hidden md:inline-flex rounded-xl bg-[#061b32] px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
-            >
-              List Your Property
-            </Link>
-            <button className="flex h-9 w-9 items-center justify-center rounded-full border border-[#e2e8f0] text-[#061b32]/60">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-              >
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-              </svg>
-            </button>
-            <Link
-              href="/profile"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-[#9fdbda]/20 text-[#061b32] font-semibold text-sm"
-            >
-              S
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Filter bar */}
       <div className="border-b border-[#e2e8f0] bg-white px-4 py-3">

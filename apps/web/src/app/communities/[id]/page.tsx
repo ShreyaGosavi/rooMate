@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -203,33 +204,7 @@ export default function CommunityDetailPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="flex h-16 items-center justify-between px-8">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={110}
-              height={28}
-              priority
-            />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/communities"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-            >
-              ← Communities
-            </Link>
-            <Link
-              href="/profile"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-            >
-              Profile
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="px-8 py-8 max-w-4xl">
         <div className="rounded-2xl border border-[#e2e8f0] bg-white p-6 mb-6">

@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -110,33 +111,7 @@ export default function PropertyDetailPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={120}
-              height={32}
-              priority
-            />
-          </Link>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32] transition-colors"
-            >
-              ← Back
-            </button>
-            <Link
-              href="/listings/create"
-              className="rounded-xl bg-[#061b32] px-5 py-2 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
-            >
-              List Your Property
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="flex gap-8 flex-col lg:flex-row">

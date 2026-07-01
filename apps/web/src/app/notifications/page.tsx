@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -230,34 +231,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="flex h-16 items-center justify-between px-8">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={110}
-              height={28}
-              priority
-            />
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/listings"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32] transition-colors"
-            >
-              Browse
-            </Link>
-            <Link
-              href="/conversations"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32] transition-colors"
-            >
-              Messages
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex min-h-[calc(100vh-64px)]">
         {/* Left — notifications (3/4) */}

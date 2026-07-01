@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -181,22 +182,14 @@ export default function ConversationsPage() {
   });
 
   return (
-    <div className="flex h-screen bg-white overflow-hidden relative">
+    <div className="flex flex-col h-screen bg-white">
+      <Navbar />
+      <div className="flex flex-1 overflow-hidden">
       <div
         className={`${activeConv ? "hidden md:flex" : "flex"} w-full md:w-80 shrink-0 border-r border-[#e2e8f0] flex-col`}
       >
         <div className="px-5 py-4 border-b border-[#e2e8f0]">
-          <div className="flex items-center justify-between mb-4">
-            <Link href="/">
-              <Image
-                src="/logo.svg"
-                alt="RooMate"
-                width={100}
-                height={26}
-                priority
-              />
-            </Link>
-          </div>
+
           <h1 className="text-lg font-bold text-[#061b32]">Messages</h1>
           <p className="text-xs text-[#061b32]/40">
             Chat with people and stay connected.
@@ -454,6 +447,7 @@ export default function ConversationsPage() {
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }

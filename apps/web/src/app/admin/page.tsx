@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -159,22 +160,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={110}
-              height={28}
-              priority
-            />
-          </Link>
-          <span className="rounded-full bg-[#061b32] px-3 py-1 text-xs font-semibold text-white">
-            Admin Panel
-          </span>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="mx-auto max-w-6xl px-6 py-8">
         <div className="mb-8">

@@ -1,4 +1,5 @@
 "use client";
+import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -113,42 +114,7 @@ export default function CommunitiesPage() {
 
   return (
     <div className="min-h-screen bg-[#f8fafa]">
-      {/* Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-[#e2e8f0] bg-white">
-        <div className="flex h-16 items-center justify-between px-8">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="RooMate"
-              width={110}
-              height={28}
-              priority
-            />
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link
-              href="/listings"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-            >
-              Browse
-            </Link>
-            <Link
-              href="/profile"
-              className="text-sm text-[#061b32]/50 hover:text-[#061b32]"
-            >
-              Profile
-            </Link>
-            {loggedIn && (
-              <Link
-                href="/listings/create"
-                className="rounded-xl bg-[#061b32] px-5 py-2 text-sm font-semibold text-white hover:opacity-90"
-              >
-                + List Property
-              </Link>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="px-8 py-8">
         {/* Header */}
