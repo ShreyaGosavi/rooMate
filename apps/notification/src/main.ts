@@ -6,7 +6,9 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: createLoggerConfig('notification') });
+  const app = await NestFactory.create(AppModule, {
+    logger: createLoggerConfig('notification'),
+  });
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,

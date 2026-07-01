@@ -96,10 +96,10 @@ export class EmailController {
     }
   }
 
-
   @Post('send-password-reset')
-  async handlePasswordResetHttp(@Body() data: { email: string; token: string }): Promise<void> {
+  async handlePasswordResetHttp(
+    @Body() data: { email: string; token: string },
+  ): Promise<void> {
     await this.emailService.sendPasswordResetEmail(data.email, data.token);
   }
-
 }

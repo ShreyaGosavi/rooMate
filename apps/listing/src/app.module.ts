@@ -6,7 +6,7 @@ import { UploadModule } from "./upload/upload.module";
 import { PropertyModule } from "./property/property.module";
 import { SaveModule } from "./save/save.module";
 
-import { HealthController } from './health.controller';
+import { HealthController } from "./health.controller";
 
 @Module({
   controllers: [HealthController],

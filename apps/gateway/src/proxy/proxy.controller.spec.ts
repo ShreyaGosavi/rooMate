@@ -55,7 +55,6 @@ describe('ProxyController', () => {
       const res = mockResponse();
       await controller.forward(mockRequest(), res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({ accessToken: 'token' });
     });
@@ -69,7 +68,6 @@ describe('ProxyController', () => {
       const res = mockResponse();
       await controller.forward(mockRequest(), res);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({ message: 'Forbidden' });
     });

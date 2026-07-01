@@ -87,8 +87,10 @@ export class AuthController {
   }
 
   @Post('reset-password')
-  resetPassword(@Body('token') token: string, @Body('password') password: string) {
+  resetPassword(
+    @Body('token') token: string,
+    @Body('password') password: string,
+  ) {
     return this.authService.resetPassword(token, password);
   }
-
 }

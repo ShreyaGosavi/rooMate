@@ -44,7 +44,10 @@ export class AuthRepository implements OnModuleInit {
   }
 
   async updatePassword(userId: string, passwordHash: string) {
-    return this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash },
+    });
   }
 
   async findByUsername(username: string) {
