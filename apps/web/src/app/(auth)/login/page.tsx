@@ -53,11 +53,10 @@ export default function LoginPage() {
         </Link>
         <div className="mt-10">
           <h2 className="text-4xl font-bold text-[#061b32] leading-snug">
-            Welcome <span className="text-[#9fdbda]">back.</span>
+            Welcome back. <span className="text-[#9fdbda]">We've been expecting you.</span>
           </h2>
           <p className="mt-4 text-[#061b32]/50 text-sm leading-relaxed max-w-sm">
-            Log in to browse verified listings, connect with your community, and
-            find your perfect place.
+            Sign in to pick up where you left off.
           </p>
         </div>
         <div className="flex-1 flex items-end pb-8">
@@ -98,10 +97,10 @@ export default function LoginPage() {
           )}
 
           <h1 className="text-2xl font-bold text-[#061b32]">
-            Log in to RooMate
+            Let's get you back in.
           </h1>
           <p className="mt-1 text-sm text-[#061b32]/50">
-            Enter your credentials to continue.
+            Sign in to pick up where you left off.
           </p>
 
           <div className="mt-8 space-y-4">

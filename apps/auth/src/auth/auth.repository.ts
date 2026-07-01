@@ -43,6 +43,10 @@ export class AuthRepository implements OnModuleInit {
     });
   }
 
+  async findByUsername(username: string) {
+    return this.prisma.user.findUnique({ where: { username } });
+  }
+
   async findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: { email },

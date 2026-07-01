@@ -65,8 +65,9 @@ export default function SignupPage() {
       await api.post("/api/auth/send-verification", { email });
       setSent(true);
       startPolling(email);
-    } catch {
-      setGeneralError("Failed to send verification email. Please try again.");
+    } catch (e: any) {
+      const msg = e?.response?.data?.message;
+      setGeneralError(Array.isArray(msg) ? msg[0] : (msg ?? "Failed to send verification email. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -100,9 +101,15 @@ export default function SignupPage() {
         gender,
       });
     } catch (e: any) {
-      setGeneralError(
-        e?.response?.data?.message ?? "Signup failed. Please try again.",
-      );
+      const msg = e?.response?.data?.message;
+      const errText = Array.isArray(msg) ? msg[0] : (msg ?? "Signup failed. Please try again.");
+      if (errText.toLowerCase().includes("username") || errText.toLowerCase().includes("taken")) {
+        setFieldErrors(p => ({ ...p, username: "This username is already taken." }));
+      } else if (errText.toLowerCase().includes("email")) {
+        setGeneralError("This email is already registered. Please log in.");
+      } else {
+        setGeneralError(errText);
+      }
       setLoading(false);
       return;
     }
@@ -143,13 +150,10 @@ export default function SignupPage() {
         </Link>
         <div className="mt-10">
           <h2 className="text-4xl font-bold text-[#061b32] leading-snug">
-            Find your <span className="text-[#9fdbda]">people,</span>
-            <br />
-            find your <span className="text-[#9fdbda]">place.</span>
+            Your next move <span className="text-[#9fdbda]">starts here.</span>
           </h2>
           <p className="mt-4 text-[#061b32]/50 text-sm leading-relaxed max-w-sm">
-            Join thousands of students and professionals finding their perfect
-            room and roommate on RooMate.
+            We can't help you pack your bags, but we can help you find the right place.
           </p>
         </div>
         <div className="flex-1 flex items-end pb-8">
@@ -242,7 +246,7 @@ export default function SignupPage() {
               <p className="mt-1 text-sm text-[#061b32]/50">
                 {sent
                   ? "Check your inbox and click the verification link."
-                  : "Let's start with your email address."}
+                  : "Let's start by verifying your email address."}
               </p>
               <div className="mt-8 space-y-4">
                 <div>
@@ -337,10 +341,10 @@ export default function SignupPage() {
           ) : (
             <>
               <h1 className="text-2xl font-bold text-[#061b32]">
-                Complete your profile
+                Tell us about yourself
               </h1>
               <p className="mt-1 text-sm text-[#061b32]/50">
-                Almost there — just a few more details.
+                Just a few more details and you're all set.
               </p>
               <div className="mt-8 space-y-4">
                 {/* Email - disabled */}

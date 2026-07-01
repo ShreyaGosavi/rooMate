@@ -82,6 +82,10 @@ export class AuthService {
     if (existingUser) {
       throw new ConflictException('User already exists');
     }
+    const existingUsername = await this.authRepository.findByUsername(dto.username);
+    if (existingUsername) {
+      throw new ConflictException('Username already taken');
+    }
     const user = await this.authRepository.createUser(dto);
     await this.kafkaProducer.emitUserCreated({
       userId: user.id,

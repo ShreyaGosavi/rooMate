@@ -67,7 +67,7 @@ export default function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white shadow-sm">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+      <div className="flex h-16 items-center justify-between px-6">
         <Link href="/" onClick={() => setMenuOpen(false)}>
           <Image src="/logo.svg" alt="RooMate" width={120} height={32} priority />
         </Link>
@@ -99,6 +99,7 @@ export default function Navbar() {
             <Link href="/profile" className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all ${isActive("/profile") ? "bg-[#9fdbda] text-[#061b32]" : "bg-[#061b32]/10 text-[#061b32] hover:bg-[#9fdbda]"}`}>
               {userInitial}
             </Link>
+            <Link href="/listings/create" className="rounded-xl bg-[#9fdbda]/20 px-4 py-2.5 text-sm font-semibold text-[#061b32] hover:bg-[#9fdbda]/40 transition-colors">+ List Property</Link>
             <button onClick={handleLogout} className="rounded-xl bg-[#061b32] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#9fdbda] hover:text-[#061b32] transition-all">
               Log out
             </button>
@@ -139,7 +140,8 @@ export default function Navbar() {
                 Notifications
                 {unread > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">{unread}</span>}
               </Link>
-              <button onClick={handleLogout} className="w-full mt-3 rounded-xl bg-[#061b32] py-2.5 text-sm font-semibold text-white text-center">Log out</button>
+              <Link href="/listings/create" onClick={() => setMenuOpen(false)} className="block w-full mt-2 rounded-xl bg-[#9fdbda] py-2.5 text-center text-sm font-semibold text-[#061b32]">+ List Property</Link>
+              <button onClick={handleLogout} className="w-full mt-2 rounded-xl bg-[#061b32] py-2.5 text-sm font-semibold text-white text-center">Log out</button>
             </>
           )}
         </div>
