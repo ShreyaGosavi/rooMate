@@ -160,6 +160,28 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.authRepository.findByEmail(email);
+    if (!user) return; // Don't reveal if email exists
+    const token = crypto.randomBytes(32).toString('hex');
+    await this.redis.set(`password:reset:${token}`, user.id, 'EX', 900); // 15 min
+    const emailServiceUrl = this.configService.get<string>('EMAIL_SERVICE_URL') ?? 'http://localhost:3002';
+    await firstValueFrom(
+      this.httpService.post(`${emailServiceUrl}/api/email/send-password-reset`, { email, token }),
+    );
+    this.logger.log(`Password reset email sent to ${email}`);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const userId = await this.redis.get(`password:reset:${token}`);
+    if (!userId) throw new BadRequestException('Invalid or expired reset token');
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.authRepository.updatePassword(userId, passwordHash);
+    await this.redis.del(`password:reset:${token}`);
+    await this.redis.del(`refresh:${userId}`); // invalidate existing sessions
+    this.logger.log(`Password reset for user: ${userId}`);
+  }
+
   async getUserById(id: string) {
     return this.authRepository.findById(id);
   }

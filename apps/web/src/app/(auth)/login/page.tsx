@@ -135,9 +135,10 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-[#061b32]">
-                Password
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-sm font-medium text-[#061b32]">Password</label>
+                <Link href="/forgot-password" className="text-xs text-[#9fdbda] hover:opacity-80">Forgot password?</Link>
+              </div>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#061b32]/30">
                   <svg

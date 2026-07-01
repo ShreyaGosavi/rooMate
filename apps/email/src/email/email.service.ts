@@ -3,6 +3,7 @@ import sgMail from '@sendgrid/mail';
 import { communitySubmittedTemplate } from './templates/community-submitted.template';
 import { communityApprovedTemplate } from './templates/community-approved.template';
 import { communityRejectedTemplate } from './templates/community-rejected.template';
+import { passwordResetTemplate } from './templates/password-reset.template';
 import { welcomeTemplate } from './templates/welcome.template';
 import { verificationTemplate } from './templates/verification.template';
 import { propertySubmittedTemplate } from './templates/property-submitted.template';
@@ -122,5 +123,13 @@ export class EmailService {
 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async sendPasswordResetEmail(to: string, token: string): Promise<void> {
+    const webUrl = process.env.WEB_URL ?? 'http://localhost:3000';
+    const resetUrl = `${webUrl}/reset-password?token=${token}`;
+    const mail = passwordResetTemplate(resetUrl);
+    mail.to = to;
+    await this.sendWithRetry(mail, 'password-reset');
   }
 }

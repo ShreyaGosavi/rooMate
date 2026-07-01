@@ -1,8 +1,8 @@
 "use client";
+import Link from "next/link";
 import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import api from "@/lib/api";
 

@@ -119,11 +119,8 @@ export default function SignupPage() {
       const { accessToken, refreshToken } = loginRes.data;
       localStorage.setItem("accessToken", accessToken);
       if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
-    } catch (loginErr: any) {
-      console.error(
-        "Auto-login failed:",
-        loginErr?.response?.data ?? loginErr?.message,
-      );
+    } catch {
+      // auto-login failed silently, user will be redirected
     } finally {
       setLoading(false);
     }

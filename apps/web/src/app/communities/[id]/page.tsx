@@ -3,7 +3,6 @@ import Navbar from "@/components/layout/navbar";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import api from "@/lib/api";
 import { isLoggedIn } from "@/lib/auth";

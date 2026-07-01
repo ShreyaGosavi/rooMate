@@ -80,4 +80,15 @@ export class AuthController {
   async getUserById(@Param('id') id: string) {
     return this.authService.getUserById(id);
   }
+
+  @Post('forgot-password')
+  forgotPassword(@Body('email') email: string) {
+    return this.authService.forgotPassword(email);
+  }
+
+  @Post('reset-password')
+  resetPassword(@Body('token') token: string, @Body('password') password: string) {
+    return this.authService.resetPassword(token, password);
+  }
+
 }

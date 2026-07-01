@@ -3,7 +3,6 @@ import Navbar from "@/components/layout/navbar";
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import api from "@/lib/api";
 
 const AMENITY_OPTIONS = [
