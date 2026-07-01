@@ -34,7 +34,9 @@ describe('AuthService', () => {
   };
   let mockAuthRepository: {
     findByEmail: jest.Mock;
+    findByUsername: jest.Mock;
     findById: jest.Mock;
+    updatePassword: jest.Mock;
     createUser: jest.Mock;
   };
   let mockJwtService: { sign: jest.Mock; verify: jest.Mock };
@@ -44,7 +46,9 @@ describe('AuthService', () => {
   beforeEach(async () => {
     mockAuthRepository = {
       findByEmail: jest.fn(),
+      findByUsername: jest.fn().mockResolvedValue(null),
       findById: jest.fn(),
+      updatePassword: jest.fn().mockResolvedValue(undefined),
       createUser: jest.fn(),
     };
 
