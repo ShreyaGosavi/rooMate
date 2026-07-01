@@ -1,11 +1,12 @@
 import { AllExceptionsFilter } from "@roomate/shared-types";
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { createLoggerConfig } from '@roomate/shared-types';
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe, Logger } from "@nestjs/common";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: createLoggerConfig('listing') });
   const logger = new Logger("ListingService");
   app.setGlobalPrefix("api");
   app.enableCors();

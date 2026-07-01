@@ -1,4 +1,4 @@
-import { AllExceptionsFilter } from '@roomate/shared-types';
+import { AllExceptionsFilter, createLoggerConfig } from '@roomate/shared-types';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
@@ -7,7 +7,8 @@ import * as express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(AppModule, { logger: createLoggerConfig('gateway'),
+
     bodyParser: false,
   });
 

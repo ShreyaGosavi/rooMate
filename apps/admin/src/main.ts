@@ -1,11 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { DocumentBuilder, SwaggerModule } = require('@nestjs/swagger');
+import { createLoggerConfig } from '@roomate/shared-types';
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { Logger } from "@nestjs/common";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: createLoggerConfig('admin') });
   const logger = new Logger("AdminBFF");
 
   app.setGlobalPrefix("api");

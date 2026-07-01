@@ -7,6 +7,8 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@nestjs/common": "^11.1.27"
+    "@nestjs/common": "^11.1.27",
+    "nest-winston": "^1.10.2",
+    "winston": "^3.19.0"
   }
 }

@@ -1,12 +1,13 @@
 import { AllExceptionsFilter } from "@roomate/shared-types";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { DocumentBuilder, SwaggerModule } = require('@nestjs/swagger');
+import { createLoggerConfig } from '@roomate/shared-types';
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe, Logger } from "@nestjs/common";
 import { AppModule } from "./app.module";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: createLoggerConfig('community') });
   const logger = new Logger("CommunityService");
   app.setGlobalPrefix("api");
   app.enableCors();

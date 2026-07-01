@@ -28,12 +28,14 @@
     "globals": "^17.6.0",
     "kafkajs": "^2.0.0",
     "multer": "^1.4.5-lts.1",
+    "nest-winston": "^1.10.2",
     "passport-jwt": "^4.0.0",
     "prettier": "^3.8.4",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",
     "typescript-eslint": "^8.61.1",
     "uuid": "^9.0.0",
+    "winston": "^3.19.0",
     "zod": "^3.22.0"
   },
   "devDependencies": {
