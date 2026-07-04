@@ -22,7 +22,9 @@
     "packages/*"
   ],
   "dependencies": {
+    "@nestjs/platform-socket.io": "^11.1.27",
     "@nestjs/swagger": "^11.4.5",
+    "@nestjs/websockets": "^11.1.27",
     "swagger-ui-express": "^5.0.1"
   }
 }

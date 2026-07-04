@@ -1,26 +1,21 @@
 import { Injectable } from "@nestjs/common";
-import { HttpService } from "@nestjs/axios";
-import { firstValueFrom } from "rxjs";
+import axios from "axios";
 
 @Injectable()
 export class AdminHttpService {
-  constructor(private readonly httpService: HttpService) {}
-
   async get<T>(
     url: string,
     token: string,
     params?: Record<string, unknown>,
     userHeaders?: Record<string, string>,
   ): Promise<T> {
-    const response = await firstValueFrom(
-      this.httpService.get<T>(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...userHeaders,
-        },
-        params,
-      }),
-    );
+    const response = await axios.get<T>(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...userHeaders,
+      },
+      params,
+    });
     return response.data;
   }
 
@@ -30,14 +25,12 @@ export class AdminHttpService {
     data?: unknown,
     userHeaders?: Record<string, string>,
   ): Promise<T> {
-    const response = await firstValueFrom(
-      this.httpService.patch<T>(url, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          ...userHeaders,
-        },
-      }),
-    );
+    const response = await axios.patch<T>(url, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...userHeaders,
+      },
+    });
     return response.data;
   }
 }

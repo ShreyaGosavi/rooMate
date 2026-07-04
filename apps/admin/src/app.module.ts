@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { HttpModule } from "@nestjs/axios";
 import { AuthModule } from "./auth/auth.module";
 import { AdminHttpService } from "./admin.http.service";
 import { PropertyController } from "./property/property.controller";
@@ -10,7 +9,7 @@ import { StatsController } from "./stats/stats.controller";
 import { HealthController } from "./health.controller";
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), HttpModule, AuthModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), AuthModule],
   controllers: [
     HealthController,
     PropertyController,

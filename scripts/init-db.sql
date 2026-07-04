@@ -1,0 +1,3 @@
+CREATE DATABASE auth_db;
+CREATE DATABASE listing_db;
+CREATE DATABASE community_db;
