@@ -6,7 +6,7 @@ import { ConversationModule } from "./conversation/conversation.module";
 import { MessageModule } from "./message/message.module";
 import { ChatGatewayModule } from "./gateway/chat.gateway.module";
 
-import { HealthController } from './health.controller';
+import { HealthController } from "./health.controller";
 
 @Module({
   controllers: [HealthController],
