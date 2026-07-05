@@ -12,6 +12,9 @@ export class ProxyController {
     if (!result) {
       throw new NotFoundException('No service configured for this route');
     }
+    if (result.status >= 300 && result.status < 400 && result.headers?.location) {
+      return res.redirect(result.status, result.headers.location);
+    }
     res.status(result.status).json(result.data);
   }
 }

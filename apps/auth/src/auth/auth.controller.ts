@@ -33,7 +33,7 @@ export class AuthController {
   async verifyEmail(@Query('token') token: string, @Res() res: Response) {
     const email = await this.authService.verifyEmail(token);
     return res.redirect(
-      `http://localhost:3000/email-verified?email=${encodeURIComponent(email)}`,
+      `${process.env.WEB_URL ?? "http://localhost:3000"}/email-verified?email=${encodeURIComponent(email)}`,
     );
   }
 
