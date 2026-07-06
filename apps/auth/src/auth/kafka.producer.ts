@@ -15,8 +15,18 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
   private connected = false;
 
   constructor() {
+    const useSasl =
+      !!process.env.KAFKA_USERNAME && !!process.env.KAFKA_PASSWORD;
     this.kafka = new Kafka({
       brokers: [process.env.KAFKA_BROKER ?? 'localhost:9092'],
+      ssl: useSasl,
+      sasl: useSasl
+        ? {
+            mechanism: 'plain',
+            username: process.env.KAFKA_USERNAME!,
+            password: process.env.KAFKA_PASSWORD!,
+          }
+        : undefined,
       retry: { retries: 3, initialRetryTime: 1000 },
     });
     this.producer = this.kafka.producer();
@@ -29,7 +39,9 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
       this.logger.log('Kafka producer connected');
     } catch {
       this.connected = false;
-      this.logger.warn('Kafka unavailable on startup - auth will work without events');
+      this.logger.warn(
+        'Kafka unavailable on startup - auth will work without events',
+      );
     }
   }
 
@@ -45,7 +57,9 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
         await this.producer.connect();
         this.connected = true;
       } catch {
-        this.logger.warn(`Kafka unavailable - user.created event dropped for ${payload.userId}`);
+        this.logger.warn(
+          `Kafka unavailable - user.created event dropped for ${payload.userId}`,
+        );
         return;
       }
     }
@@ -57,7 +71,9 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
       this.logger.log(`Emitted user.created for userId: ${payload.userId}`);
     } catch {
       this.connected = false;
-      this.logger.warn(`Failed to emit user.created for ${payload.userId} - Kafka unavailable`);
+      this.logger.warn(
+        `Failed to emit user.created for ${payload.userId} - Kafka unavailable`,
+      );
     }
   }
 }

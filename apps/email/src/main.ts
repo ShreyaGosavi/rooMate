@@ -4,12 +4,10 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: createLoggerConfig('email'),
   });
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -17,14 +15,21 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
   app.setGlobalPrefix('api');
-
+  const useSasl = !!process.env.KAFKA_USERNAME && !!process.env.KAFKA_PASSWORD;
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
         brokers: [process.env.KAFKA_BROKER ?? 'localhost:9092'],
+        ssl: useSasl,
+        sasl: useSasl
+          ? {
+              mechanism: 'plain',
+              username: process.env.KAFKA_USERNAME!,
+              password: process.env.KAFKA_PASSWORD!,
+            }
+          : undefined,
         retry: {
           retries: 10,
           initialRetryTime: 3000,
@@ -35,9 +40,7 @@ async function bootstrap() {
       },
     },
   });
-
   await app.startAllMicroservices();
-
   const config = new DocumentBuilder()
     .setTitle('Email Service')
     .setDescription('Email delivery')
@@ -49,5 +52,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3002);
   console.log(`Email service running on port ${process.env.PORT ?? 3002}`);
 }
-
 bootstrap().catch(console.error);

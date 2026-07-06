@@ -3,8 +3,8 @@ import {
   OnModuleInit,
   OnModuleDestroy,
   Logger,
-} from '@nestjs/common';
-import { Kafka, Producer } from 'kafkajs';
+} from "@nestjs/common";
+import { Kafka, Producer } from "kafkajs";
 
 @Injectable()
 export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
@@ -14,8 +14,18 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
   private connected = false;
 
   constructor() {
+    const useSasl =
+      !!process.env.KAFKA_USERNAME && !!process.env.KAFKA_PASSWORD;
     this.kafka = new Kafka({
-      brokers: [process.env.KAFKA_BROKER ?? 'localhost:9092'],
+      brokers: [process.env.KAFKA_BROKER ?? "localhost:9092"],
+      ssl: useSasl,
+      sasl: useSasl
+        ? {
+            mechanism: "plain",
+            username: process.env.KAFKA_USERNAME!,
+            password: process.env.KAFKA_PASSWORD!,
+          }
+        : undefined,
       retry: { retries: 3, initialRetryTime: 1000 },
     });
     this.producer = this.kafka.producer();
@@ -25,10 +35,12 @@ export class KafkaProducer implements OnModuleInit, OnModuleDestroy {
     try {
       await this.producer.connect();
       this.connected = true;
-      this.logger.log('Kafka producer connected');
+      this.logger.log("Kafka producer connected");
     } catch {
       this.connected = false;
-      this.logger.warn('Kafka unavailable on startup - service will work without events');
+      this.logger.warn(
+        "Kafka unavailable on startup - service will work without events",
+      );
     }
   }
 
