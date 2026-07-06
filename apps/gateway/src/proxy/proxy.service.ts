@@ -10,6 +10,7 @@ import { ROUTE_MAP, PROTECTED_PREFIXES } from './route-map';
 interface ProxyResult {
   status: number;
   data: unknown;
+  headers?: Record<string, string>;
 }
 
 @Injectable()
@@ -96,6 +97,8 @@ export class ProxyService {
           headers: forwardedHeaders,
           maxBodyLength: Infinity,
           maxContentLength: Infinity,
+          maxRedirects: 0,
+          validateStatus: (status) => status < 600,
         }),
       );
 
@@ -104,7 +107,11 @@ export class ProxyService {
         `${req.method} ${req.originalUrl} → ${response.status} (${duration}ms)`,
       );
 
-      return { status: response.status, data: response.data };
+      const headers: Record<string, string> = {};
+      if (response.headers['location']) {
+        headers['location'] = response.headers['location'] as string;
+      }
+      return { status: response.status, data: response.data, headers };
     } catch (error) {
       const axiosError = error as AxiosError;
       const duration = Date.now() - start;

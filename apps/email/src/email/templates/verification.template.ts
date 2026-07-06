@@ -9,7 +9,7 @@ export const verificationTemplate = (email: string, token: string) => ({
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h2 style="color: #061b32;">Verify your email</h2>
       <p>Click the link below to verify your email address:</p>
-      <a href="http://localhost:3001/api/auth/verify-email?token=${token}" 
+      <a href="http://localhost:3007/api/auth/verify-email?token=${token}" 
          style="display:inline-block;background:#061b32;color:#9fdbda;padding:12px 24px;text-decoration:none;font-weight:600;">
         Verify Email
       </a>

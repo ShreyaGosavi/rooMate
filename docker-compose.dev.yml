@@ -108,6 +108,7 @@ services:
       REDIS_PORT: 6379
       KAFKA_BROKER: kafka:9092
       EMAIL_SERVICE_URL: http://email:3002
+      WEB_URL: http://localhost:3000
     depends_on:
       postgres:
         condition: service_healthy
