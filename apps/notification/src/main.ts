@@ -4,17 +4,24 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: createLoggerConfig('notification'),
   });
-
+  const useSasl = !!process.env.KAFKA_USERNAME && !!process.env.KAFKA_PASSWORD;
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,
     options: {
       client: {
         brokers: [process.env.KAFKA_BROKER ?? 'localhost:9092'],
+        ssl: useSasl,
+        sasl: useSasl
+          ? {
+              mechanism: 'plain',
+              username: process.env.KAFKA_USERNAME!,
+              password: process.env.KAFKA_PASSWORD!,
+            }
+          : undefined,
         retry: {
           retries: 10,
           initialRetryTime: 3000,
@@ -25,7 +32,6 @@ async function bootstrap() {
       },
     },
   });
-
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -33,11 +39,9 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
   app.setGlobalPrefix('api');
   await app.startAllMicroservices();
   app.useGlobalFilters(new AllExceptionsFilter());
-
   const config = new DocumentBuilder()
     .setTitle('Notification Service')
     .setDescription('User notifications')

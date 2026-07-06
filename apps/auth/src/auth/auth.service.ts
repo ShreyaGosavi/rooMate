@@ -38,6 +38,8 @@ export class AuthService {
   ) {
     this.redis = new Redis({
       host: this.configService.get<string>('REDIS_HOST') ?? 'localhost',
+      password: this.configService.get<string>('REDIS_PASSWORD'),
+      tls: this.configService.get<string>('REDIS_PASSWORD') ? {} : undefined,
       port: this.configService.get<number>('REDIS_PORT') ?? 6379,
     });
   }
