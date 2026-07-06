@@ -24,3 +24,4 @@ npm-debug.log*
 .vscode/
 .idea/
 .env.docker
+.env.production
