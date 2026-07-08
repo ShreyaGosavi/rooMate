@@ -127,7 +127,7 @@ export default function AdminPage() {
 
   const updateCommunity = async (
     id: string,
-    status: "VERIFIED" | "REJECTED",
+    status: "APPROVED" | "REJECTED",
   ) => {
     setActionLoading(id + status);
     try {
