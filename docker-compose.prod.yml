@@ -15,7 +15,7 @@ services:
       ADMIN_SERVICE_URL: http://admin:3005
       CHAT_SERVICE_URL: http://chat:3006
       NOTIFICATION_SERVICE_URL: http://notification:3008
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
     depends_on:
       - auth
       - listing
@@ -37,13 +37,16 @@ services:
     environment:
       PORT: 3001
       DATABASE_URL: ${AUTH_DATABASE_URL}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
-      REDIS_URL: ${REDIS_URL}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
       KAFKA_BROKER: ${KAFKA_BROKER}
       KAFKA_USERNAME: ${KAFKA_USERNAME}
       KAFKA_PASSWORD: ${KAFKA_PASSWORD}
       EMAIL_SERVICE_URL: http://email:3002
+      WEB_URL: ${WEB_URL}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/health"]
@@ -62,9 +65,11 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
       AWS_REGION: ${AWS_REGION}
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      JWT_SECRET: ${JWT_ACCESS_SECRET}
       KAFKA_BROKER: ${KAFKA_BROKER}
       KAFKA_USERNAME: ${KAFKA_USERNAME}
       KAFKA_PASSWORD: ${KAFKA_PASSWORD}
+      GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3003/api/health"]
@@ -79,6 +84,7 @@ services:
     environment:
       PORT: 3004
       DATABASE_URL: ${COMMUNITY_DATABASE_URL}
+      JWT_SECRET: ${JWT_ACCESS_SECRET}
       KAFKA_BROKER: ${KAFKA_BROKER}
       KAFKA_USERNAME: ${KAFKA_USERNAME}
       KAFKA_PASSWORD: ${KAFKA_PASSWORD}
@@ -96,7 +102,7 @@ services:
     environment:
       PORT: 3006
       MONGODB_URI: ${MONGODB_URI}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: ${JWT_ACCESS_SECRET}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3006/api/health"]
@@ -111,8 +117,7 @@ services:
     environment:
       PORT: 3008
       MONGODB_URI: ${NOTIFICATION_MONGODB_URI}
-      # Note: NOTIFICATION_MONGODB_URI should point to notification_db
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_ACCESS_SECRET: ${JWT_ACCESS_SECRET}
       KAFKA_BROKER: ${KAFKA_BROKER}
       KAFKA_USERNAME: ${KAFKA_USERNAME}
       KAFKA_PASSWORD: ${KAFKA_PASSWORD}
@@ -132,6 +137,7 @@ services:
       KAFKA_BROKER: ${KAFKA_BROKER}
       KAFKA_USERNAME: ${KAFKA_USERNAME}
       KAFKA_PASSWORD: ${KAFKA_PASSWORD}
+      KAFKAJS_NO_PARTITIONER_WARNING: 1
       SENDGRID_API_KEY: ${SENDGRID_API_KEY}
       SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
       WEB_URL: ${WEB_URL}
@@ -151,7 +157,8 @@ services:
       AUTH_SERVICE_URL: http://auth:3001
       LISTING_SERVICE_URL: http://listing:3003
       COMMUNITY_SERVICE_URL: http://community:3004
-      JWT_SECRET: ${JWT_SECRET}
+      NOTIFICATION_SERVICE_URL: http://notification:3008
+      JWT_SECRET: ${JWT_ACCESS_SECRET}
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3005/api/health"]
