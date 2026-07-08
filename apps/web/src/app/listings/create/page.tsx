@@ -280,7 +280,7 @@ export default function CreateListingPage() {
         await import("@googlemaps/js-api-loader");
       setOptions({
         key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY!,
-        version: "weekly",
+        v: "weekly",
         libraries: ["places"],
       });
 
