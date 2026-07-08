@@ -1,14 +1,14 @@
 "use client";
 import Navbar from "@/components/layout/navbar";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import api from "@/lib/api";
 import { useSearchParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 
-export default function ConversationsPage() {
+function ConversationsInner() {
   const [conversations, setConversations] = useState<any[]>([]);
   const [activeConv, setActiveConv] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
@@ -449,5 +449,13 @@ export default function ConversationsPage() {
       )}
       </div>
     </div>
+  );
+}
+
+export default function ConversationsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ConversationsInner />
+    </Suspense>
   );
 }

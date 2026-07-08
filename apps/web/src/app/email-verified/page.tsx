@@ -1,9 +1,9 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense} from "react";
 
-export default function EmailVerifiedPage() {
+function EmailVerifiedInner() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") ?? "";
 
@@ -43,5 +43,13 @@ export default function EmailVerifiedPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function EmailVerifiedPage() {
+  return (
+    <Suspense fallback={null}>
+      <EmailVerifiedInner />
+    </Suspense>
   );
 }
