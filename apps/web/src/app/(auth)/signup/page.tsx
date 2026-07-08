@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
@@ -8,7 +8,7 @@ import api from "@/lib/api";
 
 type Step = 1 | 2;
 
-export default function SignupPage() {
+function SignupInner() {
   const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>(1);
   const [email, setEmail] = useState("");
@@ -629,5 +629,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupInner />
+    </Suspense>
   );
 }
