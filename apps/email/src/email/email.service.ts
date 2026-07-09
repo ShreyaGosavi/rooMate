@@ -26,7 +26,8 @@ export class EmailService {
   }
 
   async sendVerificationEmail(email: string, token: string): Promise<void> {
-    const mail = verificationTemplate(email, token);
+    const apiUrl = process.env.API_URL ?? 'http://localhost:3007';
+    const mail = verificationTemplate(email, token, apiUrl);
     await this.sendWithRetry(mail, 'verification');
   }
 
@@ -66,7 +67,7 @@ export class EmailService {
       to: toEmail,
       from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
       subject: `Your community "${communityName}" is now live!`,
-      html: communityApprovedTemplate(communityName),
+      html: communityApprovedTemplate(communityName, process.env.WEB_URL ?? 'http://localhost:3000'),
     };
     await this.sendWithRetry(mail, 'community-approved');
   }
@@ -79,7 +80,7 @@ export class EmailService {
       to: toEmail,
       from: { name: 'RooMate', email: 'gosavishreya08@gmail.com' },
       subject: `Update on your community request: ${communityName}`,
-      html: communityRejectedTemplate(communityName),
+      html: communityRejectedTemplate(communityName, process.env.WEB_URL ?? 'http://localhost:3000'),
     };
     await this.sendWithRetry(mail, 'community-rejected');
   }
