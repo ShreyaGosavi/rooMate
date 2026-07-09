@@ -1,159 +1,228 @@
-# Turborepo starter
+# RooMate 🏠
 
-This Turborepo starter is maintained by the Turborepo core team.
+**Find your place. Feel at home.**
 
-## Using this example
+RooMate is a full-stack platform that helps students and young professionals find PGs, hostels, and roommates — replacing scattered WhatsApp groups and broker fees with verified listings, a trusted community, and real-time chat.
 
-Run the following command:
+🔗 **Live:** [roomate.site](https://roomate.site)
 
-```sh
-npx create-turbo@latest
+---
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [Tech Stack](#tech-stack)
+- [Services](#services)
+- [Getting Started (Local Setup)](#getting-started-local-setup)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Documentation](#documentation)
+- [Screenshots](#screenshots)
+- [Author](#author)
+
+---
+
+## Overview
+
+Finding a PG, hostel, or roommate as a student usually means scrolling through unreliable WhatsApp groups or paying broker fees for listings that may not even be accurate. RooMate solves this with:
+
+- **Verified property listings** with photos, filters, and smart search
+- **Roommate matching** through community pages
+- **Real-time chat** between seekers and property owners
+- **Admin-moderated approvals** for listings and communities, so the platform stays trustworthy
+- **Instant notifications & emails** for every important event (approval, rejection, new message)
+
+Built as a distributed system of **8 independent microservices**, RooMate is designed the way a real production platform would be — not a monolith, with each service owning its own data and communicating through events.
+
+> 📄 The problem this project set out to solve — why students and bachelors are underserved by platforms like NoBroker or 99acres, which are built for families and full-apartment buyers, not for someone splitting rent on one bed near their college — is laid out in [`docs/problem-statement.md`](./docs/problem-statement.md).
+>
+> 🐛 Shipping this to production surfaced a series of real, gnarly infrastructure bugs — from Kafka reconnect storms, to unmigrated production databases, to a misleading Prisma error that turned out to be a raw SSL handshake failure. The full trail of problems and how each was diagnosed and fixed is documented in [`docs/deployment-experience.md`](./docs/deployment-experience.md) — worth a read if you want to see the debugging process, not just the finished product.
+
+---
+
+## Architecture
+
+RooMate follows a **microservices architecture** with an API gateway, event-driven communication via Kafka, and a polyglot persistence strategy (the right database for each service's needs).
+
+```mermaid
+flowchart TB
+    subgraph Client
+        WEB[Next.js Frontend<br/>roomate.site]
+    end
+
+    subgraph Edge
+        CF[Cloudflare<br/>DNS + Proxy]
+        NGINX[Nginx<br/>Reverse Proxy — EC2]
+        GW[Gateway Service<br/>:3007]
+    end
+
+    subgraph Services
+        AUTH[Auth Service]
+        LISTING[Listing Service]
+        COMMUNITY[Community Service]
+        ADMIN[Admin Service]
+        CHAT[Chat Service]
+        NOTIF[Notification Service]
+        EMAIL[Email Service]
+    end
+
+    subgraph Data
+        PG[(PostgreSQL - RDS<br/>auth_db / listing_db / community_db)]
+        MONGO[(MongoDB Atlas<br/>chat / notifications)]
+        REDIS[(Redis - Upstash)]
+    end
+
+    subgraph Events
+        KAFKA{{Kafka - Confluent Cloud}}
+    end
+
+    subgraph External
+        SENDGRID[SendGrid]
+    end
+
+    WEB -->|HTTPS via api.roomate.site| CF
+    CF --> NGINX
+    NGINX --> GW
+    GW --> AUTH
+    GW --> LISTING
+    GW --> COMMUNITY
+    GW --> ADMIN
+    GW -.->|WebSocket| CHAT
+
+    AUTH --> PG
+    LISTING --> PG
+    COMMUNITY --> PG
+    CHAT --> MONGO
+    NOTIF --> MONGO
+    AUTH --> REDIS
+
+    AUTH -->|events| KAFKA
+    LISTING -->|events| KAFKA
+    COMMUNITY -->|events| KAFKA
+    KAFKA --> EMAIL
+    KAFKA --> NOTIF
+    EMAIL --> SENDGRID
 ```
 
-## What's inside?
+**Key design decisions:**
 
-This Turborepo includes the following packages/apps:
+- **Database-per-service** — Auth, Listing, and Community each have their own isolated PostgreSQL database (no shared tables across services), enforcing true service boundaries.
+- **MongoDB for Chat & Notification** — these services have flexible, high-write, less relational data (messages, notification feeds), which fits a document store better than relational tables.
+- **Kafka for cross-service events** — instead of services calling each other directly, actions like `property.approved` or `community.rejected` are published as events, so Email and Notification services react independently without tight coupling.
+- **Single Gateway entry point** — the frontend only ever talks to one service (`api.roomate.site`), which routes to the right backend service internally.
+- **Cloudflare in front of `api.roomate.site`** — handles DNS and proxies traffic to the EC2 instance, adding SSL and a layer of protection in front of the backend, rather than exposing the instance's raw IP.
+- **Nginx as reverse proxy on EC2** — sits behind Cloudflare and routes incoming requests to the Gateway service before they reach the Dockerized services.
 
-### Apps and Packages
+> 📌 *A full architecture walkthrough with the reasoning behind each decision is in [`docs/architecture.md`](./docs/architecture.md).*
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## Tech Stack
 
-### Utilities
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js, React, Tailwind CSS — deployed on Vercel |
+| **Backend** | NestJS (Node.js/TypeScript), 8 microservices |
+| **Databases** | PostgreSQL (AWS RDS) · MongoDB (Atlas) |
+| **Cache** | Redis (Upstash) |
+| **Messaging** | Kafka (Confluent Cloud) |
+| **Email** | SendGrid |
+| **ORM** | Prisma (Postgres services) |
+| **Infra** | Docker, Docker Compose, AWS EC2, Nginx (reverse proxy), Cloudflare (DNS + proxy) |
+| **CI/CD** | GitHub Actions |
+| **Auth** | JWT (access + refresh tokens) |
 
-This Turborepo has some additional tools already setup for you:
+*(Full breakdown with reasoning for each choice in [`docs/tech-stack.md`](./docs/tech-stack.md).)*
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+---
 
-### Build
+## Services
 
-To build all apps and packages, run the following command:
+| Service | Responsibility | Database | Docs |
+|---|---|---|---|
+| **Gateway** | Single entry point, routing, CORS, auth guard | — | [→](./docs/services/gateway.md) |
+| **Auth** | Signup, login, JWT, email verification | PostgreSQL (`auth_db`) | [→](./docs/services/auth.md) |
+| **Listing** | Property CRUD, search, filters | PostgreSQL (`listing_db`) | [→](./docs/services/listing.md) |
+| **Community** | Roommate communities, requests | PostgreSQL (`community_db`) | [→](./docs/services/community.md) |
+| **Admin** | Approve/reject listings & communities | — (BFF over other services) | [→](./docs/services/admin.md) |
+| **Chat** | Real-time messaging (WebSocket) | MongoDB | [→](./docs/services/chat.md) |
+| **Notification** | In-app notification feed | MongoDB | [→](./docs/services/notification.md) |
+| **Email** | Transactional emails via SendGrid, Kafka consumer | — | [→](./docs/services/email.md) |
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+Each service doc includes: role & responsibilities, API reference (Swagger), ER diagram (where applicable), sequence diagram for its key flow, and test coverage.
 
-```sh
-cd my-turborepo
-turbo build
+**Swagger docs** are available per service in development at `http://localhost:<port>/docs`.
+
+---
+
+## Getting Started (Local Setup)
+
+> Full step-by-step instructions: [`docs/local-setup.md`](./docs/local-setup.md)
+
+```bash
+# Clone the repo
+git clone https://github.com/ShreyaGosavi/rooMate.git
+cd rooMate
+
+# Install dependencies
+npm install --legacy-peer-deps
+
+# Set up environment variables
+cp .env.example .env
+# fill in DATABASE_URLs, KAFKA_BROKER, SENDGRID_API_KEY, etc.
+
+# Run all services with Docker Compose
+docker compose up -d
+
+# Or run the frontend separately
+cd apps/web
+npm run dev
 ```
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo build
-npm dlx turbo build
-npm exec turbo build
-```
+## Testing
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+RooMate's services are covered by **137 tests** across unit and integration suites, run automatically in CI on every pull request via GitHub Actions.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+*(See [`docs/services/`](./docs/services/) for the per-service breakdown of test counts and coverage.)*
 
-```sh
-turbo build --filter=docs
-```
+---
 
-Without global `turbo`:
+## Deployment
 
-```sh
-npx turbo build --filter=docs
-npm exec turbo build --filter=docs
-npm exec turbo build --filter=docs
-```
+- **Frontend** — deployed on Vercel, auto-deploys from `main`
+- **Backend** — 8 services running via Docker Compose on a single AWS EC2 instance
+- **Databases** — AWS RDS (Postgres), MongoDB Atlas, Upstash (Redis + Kafka via Confluent Cloud)
 
-### Develop
+Full deployment architecture, environment setup, and the real challenges faced running this on a constrained EC2 instance: [`docs/deployment.md`](./docs/deployment.md) and [`docs/deployment-experience.md`](./docs/deployment-experience.md).
 
-To develop all apps and packages, run the following command:
+---
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+## Documentation
 
-```sh
-cd my-turborepo
-turbo dev
-```
+| Doc | What it covers |
+|---|---|
+| [Problem Statement](./docs/problem-statement.md) | The original problem RooMate set out to solve, and who it's for |
+| [Architecture](./docs/architecture.md) | High-level system design & reasoning |
+| [Tech Stack](./docs/tech-stack.md) | Every technology used & why |
+| [Service docs](./docs/services/) | Per-service deep dive, ER diagrams, sequence diagrams, Swagger |
+| [Design](./docs/design.md) | Branding, naming, UI/UX system |
+| [Deployment](./docs/deployment.md) | Infra setup, environments, how to deploy |
+| [Deployment Experience](./docs/deployment-experience.md) | Every real bug hit shipping this to production — Kafka storms, unmigrated DBs, SSL failures — and how each was diagnosed & fixed |
+| [Monitoring](./docs/monitoring.md) | Health checks, logging approach |
+| [Local Setup](./docs/local-setup.md) | Running the whole stack locally |
 
-Without global `turbo`, use your package manager:
+---
 
-```sh
-cd my-turborepo
-npx turbo dev
-npm exec turbo dev
-npm exec turbo dev
-```
+## Screenshots
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+*(See [`docs/screenshots.md`](./docs/screenshots.md) for the full walkthrough, and the demo video linked there.)*
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+---
 
-```sh
-turbo dev --filter=web
-```
+## Author
 
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-npm exec turbo dev --filter=web
-npm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-npm exec turbo login
-npm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-npm exec turbo link
-npm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+**Shreya Gosavi**
+[GitHub](https://github.com/ShreyaGosavi) · [LinkedIn](https://www.linkedin.com/in/shreyapgosavi) · [roomate.site](https://roomate.site)
