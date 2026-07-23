@@ -38,7 +38,7 @@ function ConversationsInner() {
 
     fetchConversations(userId, searchParams.get("id") || undefined);
 
-    const socket = io("http://localhost:3006/chat", {
+    const socket = io(`${process.env.NEXT_PUBLIC_API_URL}/chat`, {
       auth: { token },
       transports: ["websocket"],
     });
