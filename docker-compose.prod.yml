@@ -16,6 +16,13 @@ services:
     build:
       context: .
       dockerfile: apps/gateway/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/gateway
+        awslogs-create-group: "true"
+        awslogs-stream: gateway
     environment:
       PORT: 3007
       AUTH_SERVICE_URL: http://auth:3001
@@ -43,6 +50,13 @@ services:
     build:
       context: .
       dockerfile: apps/auth/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/auth
+        awslogs-create-group: "true"
+        awslogs-stream: auth
     environment:
       PORT: 3001
       DATABASE_URL: ${AUTH_DATABASE_URL}
@@ -68,6 +82,13 @@ services:
     build:
       context: .
       dockerfile: apps/listing/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/listing
+        awslogs-create-group: "true"
+        awslogs-stream: listing
     environment:
       PORT: 3003
       DATABASE_URL: ${LISTING_DATABASE_URL}
@@ -91,6 +112,13 @@ services:
     build:
       context: .
       dockerfile: apps/community/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/community
+        awslogs-create-group: "true"
+        awslogs-stream: community
     environment:
       PORT: 3004
       DATABASE_URL: ${COMMUNITY_DATABASE_URL}
@@ -109,6 +137,13 @@ services:
     build:
       context: .
       dockerfile: apps/chat/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/chat
+        awslogs-create-group: "true"
+        awslogs-stream: chat
     environment:
       PORT: 3006
       MONGODB_URI: ${MONGODB_URI}
@@ -124,6 +159,13 @@ services:
     build:
       context: .
       dockerfile: apps/notification/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/notification
+        awslogs-create-group: "true"
+        awslogs-stream: notification
     environment:
       PORT: 3008
       MONGODB_URI: ${NOTIFICATION_MONGODB_URI}
@@ -142,6 +184,13 @@ services:
     build:
       context: .
       dockerfile: apps/email/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/email
+        awslogs-create-group: "true"
+        awslogs-stream: email
     environment:
       PORT: 3002
       KAFKA_BROKER: ${KAFKA_BROKER}
@@ -163,6 +212,13 @@ services:
     build:
       context: .
       dockerfile: apps/admin/Dockerfile
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-south-1
+        awslogs-group: /roomate/admin
+        awslogs-create-group: "true"
+        awslogs-stream: admin
     environment:
       PORT: 3005
       AUTH_SERVICE_URL: http://auth:3001
