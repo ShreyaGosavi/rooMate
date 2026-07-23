@@ -234,11 +234,8 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6">
           <SectionHeading>About Us</SectionHeading>
           <div className="mt-12 flex flex-col items-center gap-10 md:flex-row md:items-center">
-            <div className="h-52 w-52 shrink-0 rounded-2xl bg-[#9fdbda]/10 flex items-center justify-center text-sm text-[#061b32]/30 border border-[#9fdbda]/20">
-              Photo
-            </div>
             <div className="flex-1">
-              <p className="text-2xl font-bold text-[#061b32]">Hi, I'm Shreya.</p>
+              <p className="text-2xl font-bold text-[#061b32]">Hello from RooMate!</p>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#061b32]/60">
                 Finding a place to live should be exciting — not confusing or uncertain. That's the idea behind RooMate. I built it not to be just another property platform, but to create a place where verified properties and a supportive community come together. Whether you're searching for your next home or helping someone else find theirs, I hope RooMate becomes a place you can trust.
               </p>
