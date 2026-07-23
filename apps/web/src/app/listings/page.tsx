@@ -288,6 +288,7 @@ export default function BrowseListingsPage() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && applyFilters()}
               placeholder="Search location..."
               className="text-sm text-[#061b32] placeholder:text-[#061b32]/30 focus:outline-none w-full bg-transparent"
             />
@@ -298,6 +299,7 @@ export default function BrowseListingsPage() {
               type="number"
               value={minRent}
               onChange={(e) => setMinRent(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && applyFilters()}
               placeholder="Min"
               className="w-14 text-sm text-[#061b32] focus:outline-none bg-transparent"
             />
@@ -306,6 +308,7 @@ export default function BrowseListingsPage() {
               type="number"
               value={maxRent}
               onChange={(e) => setMaxRent(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && applyFilters()}
               placeholder="Max"
               className="w-14 text-sm text-[#061b32] focus:outline-none bg-transparent"
             />
@@ -360,7 +363,7 @@ export default function BrowseListingsPage() {
         {/* Desktop sidebar */}
         <aside className="hidden lg:block w-64 shrink-0">
           <div className="rounded-2xl border border-[#e2e8f0] bg-white p-5 sticky top-24">
-            <FilterContent />
+            {FilterContent()}
           </div>
         </aside>
 
@@ -785,7 +788,7 @@ export default function BrowseListingsPage() {
                 </svg>
               </button>
             </div>
-            <FilterContent />
+            {FilterContent()}
           </div>
         </div>
       )}

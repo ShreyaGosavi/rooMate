@@ -301,8 +301,13 @@ export default function CreateListingPage() {
       });
 
       const markerEl = document.createElement("div");
-      markerEl.style.cssText =
-        "width:24px;height:24px;background:#9fdbda;border:3px solid #061b32;border-radius:50%;cursor:grab;";
+      markerEl.innerHTML = `
+        <svg width="32" height="42" viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 0C7.163 0 0 7.163 0 16c0 11 16 26 16 26s16-15 16-26c0-8.837-7.163-16-16-16z" fill="#e11d48" stroke="#061b32" stroke-width="1.5"/>
+          <circle cx="16" cy="16" r="6" fill="white"/>
+        </svg>
+      `;
+      markerEl.style.cssText = "cursor:grab;";
 
       const marker = new AdvancedMarkerElement({
         position: { lat: latitude, lng: longitude },
