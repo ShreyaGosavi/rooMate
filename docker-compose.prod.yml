@@ -13,9 +13,7 @@ services:
     restart: unless-stopped
 
   gateway:
-    build:
-      context: .
-      dockerfile: apps/gateway/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-gateway:latest
     logging:
       driver: awslogs
       options:
@@ -47,9 +45,7 @@ services:
       retries: 3
 
   auth:
-    build:
-      context: .
-      dockerfile: apps/auth/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-auth:latest
     logging:
       driver: awslogs
       options:
@@ -79,9 +75,7 @@ services:
       retries: 3
 
   listing:
-    build:
-      context: .
-      dockerfile: apps/listing/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-listing:latest
     logging:
       driver: awslogs
       options:
@@ -109,9 +103,7 @@ services:
       retries: 3
 
   community:
-    build:
-      context: .
-      dockerfile: apps/community/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-community:latest
     logging:
       driver: awslogs
       options:
@@ -134,9 +126,7 @@ services:
       retries: 3
 
   chat:
-    build:
-      context: .
-      dockerfile: apps/chat/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-chat:latest
     logging:
       driver: awslogs
       options:
@@ -156,9 +146,7 @@ services:
       retries: 3
 
   notification:
-    build:
-      context: .
-      dockerfile: apps/notification/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-notification:latest
     logging:
       driver: awslogs
       options:
@@ -181,9 +169,7 @@ services:
       retries: 3
 
   email:
-    build:
-      context: .
-      dockerfile: apps/email/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-email:latest
     logging:
       driver: awslogs
       options:
@@ -209,9 +195,7 @@ services:
       retries: 3
 
   admin:
-    build:
-      context: .
-      dockerfile: apps/admin/Dockerfile
+    image: 298713974306.dkr.ecr.ap-south-1.amazonaws.com/roomate-admin:latest
     logging:
       driver: awslogs
       options:
