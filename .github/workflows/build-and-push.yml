@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [gateway]
+        service: [gateway, auth, listing, community, admin, chat, notification, email]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
