@@ -33,4 +33,4 @@ RooMate isn't some finished, market-tested product, and I'm not pretending it is
 
 ---
 
-*See also: [Architecture](architecture.md) · [Tech Stack](tech-stack.md) · [Journey](journey.md)*
+*See also: [Architecture](architecture.md) · [Tech Stack](tech-stack.md)*

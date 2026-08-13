@@ -22,7 +22,6 @@ RooMate is a full-stack platform that helps students and young professionals fin
 | Doc | What it covers |
 |---|---|
 | [Motivation](docs/motivation.md) | Why this problem, why now, why me |
-| [Journey](docs/journey.md) | Early research, paperwork, sketches — how the idea evolved |
 | [Architecture](docs/architecture.md) | System design & reasoning |
 | [Tech Stack](docs/tech-stack.md) | Every technology used & why |
 | [ER Diagram](docs/er-diagram.md) | Cross-service data model |
